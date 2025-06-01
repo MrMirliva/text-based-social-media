@@ -13,15 +13,31 @@ public class FollowService {
     }
 
     public ResponseEntity<Boolean> follow(User follower, String targetUserId) {
-       return null;
+        if (follower.getId().equals(targetUserId)) {
+            return new ResponseEntity<>(false, "You cannot follow yourself", false);
+        }
+
+        if (followRepository.exists(follower.getId(), targetUserId)) {
+            return new ResponseEntity<>(false, "You are already following this user", false);
+        }
+
+        Follow follow = new Follow(follower.getId(), targetUserId);
+        followRepository.add(follow);
+        return new ResponseEntity<>(true, "Followed successfully", true);
     }
 
     public ResponseEntity<Boolean> unfollow(User follower, String targetUserId) {
-      return null;
+      if (!followRepository.exists(follower.getId(), targetUserId)) {
+            return new ResponseEntity<>(false, "You are not following this user", false);
+        }
+
+        followRepository.deleteByFollowerAndTarget(follower.getId(), targetUserId);
+        return new ResponseEntity<>(true, "Unfollowed successfully", true);
     }
 
     public int getFollowerCount(String userId) {
-        return 0;
+          return followRepository.countFollowingByUserId(userId);
+
     }   
     
 }

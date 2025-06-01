@@ -7,6 +7,12 @@ public class User extends MACModel{
     private String fullName;
     private String password;
 
+    // Default constructor
+    public User(String fullName, String username, String password) {
+        this.fullName = fullName;
+        this.username = username;
+        this.password = password;
+    }
     
     public String getUsername() {
         return username;

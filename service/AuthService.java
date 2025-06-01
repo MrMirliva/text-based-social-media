@@ -1,7 +1,12 @@
 package service;
 
 import repositories.UserRepository;
+
+import java.util.Optional;
+
 import org.springframework.http.ResponseEntity;
+
+import models.User;
 
 
 public class AuthService {
@@ -14,12 +19,31 @@ public class AuthService {
     }
 
     
-   public ResponseEntity<User> login(String username, String password) {
-       return null;
+   public User login(String username, String password) {
+
+        Optional<User> user = userRepository.findByUsername(username);
+
+        if (user == null) {
+            return new ResponseEntity<>(null, "User not found", false);
+        }
+
+        if (!user.get().getPassword().equals(password)) {
+            return new ResponseEntity<>(null, "Incorrect password", false);
+        }
+
+        this.sessionUser = user;
+        return new ResponseEntity<>(user, "Login successful", true);
+
     }
 
-    public ResponseEntity<User> register(String username, String password) {
-        return null;
+    public ResponseEntity<User> register(String fullName, String username, String password) {
+        if (userRepository.findByUsername(username) != null) {
+            return new ResponseEntity<>(null, "Username already exists", false);
+        }
+
+        User newUser = new User(fullName, username, password); 
+        userRepository.add(newUser);
+        return new ResponseEntity<>(newUser, "Registration successful", true);
     }
 
     public void logout() {

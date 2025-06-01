@@ -12,15 +12,34 @@ public class UserService {
     }
 
     public ResponseEntity<User> viewProfile(User user) {
-       return null;
+        if (user == null) {
+            return new ResponseEntity<>(null, "User not found", false);
+        }
+        return new ResponseEntity<>(user, "Profile retrieved successfully", true);
     }
 
     public ResponseEntity<User> updateUsername(User user, String newUsername) {
-       return null;
+        if (newUsername == null || newUsername.trim().isEmpty()) {
+            return new ResponseEntity<>(null, "Username cannot be empty", false);
+        }
+
+        if (userRepository.findByUsername(newUsername) != null) {
+            return new ResponseEntity<>(null, "Username already exists", false);
+        }
+
+        user.setUsername(newUsername);
+        userRepository.update(user);
+        return new ResponseEntity<>(user, "Username updated successfully", true);
     }
 
     public ResponseEntity<User> updatePassword(User user, String newPassword) {
-       return null
+        if (newPassword == null || newPassword.length() < 4) {
+            return new ResponseEntity<>(null, "Password must be at least 4 characters", false);
+        }
+
+        user.setPassword(newPassword);
+        userRepository.update(user);
+        return new ResponseEntity<>(user, "Password updated successfully", true);
     }
 }
     

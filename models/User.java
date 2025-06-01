@@ -13,6 +13,10 @@ public class User extends MACModel{
         this.username = username;
         this.password = password;
     }
+
+    public User() {
+        // Default constructor for serialization/deserialization
+    }
     
     public String getUsername() {
         return username;

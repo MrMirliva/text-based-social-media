@@ -1,6 +1,8 @@
 package service;
 
 import repositories.UserRepository;
+import org.springframework.http.ResponseEntity;
+
 
 public class AuthService {
      private final UserRepository userRepository;
@@ -13,11 +15,11 @@ public class AuthService {
 
     
    public ResponseEntity<User> login(String username, String password) {
-       
+       return null;
     }
 
     public ResponseEntity<User> register(String username, String password) {
-        
+        return null;
     }
 
     public void logout() {
@@ -25,8 +27,7 @@ public class AuthService {
     }
 
     public boolean isAuthenticated() {
-       
+       return false;
     }
 
-   
 }

@@ -4,9 +4,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import memento.anatation.Default;
+import memento.anatation.Unique;
+
 import java.lang.reflect.Field;
 
-///TODO: MACRepository sınıfını test et.
 public abstract class MACRepository<T extends MACModel> {
     
     protected final List<T> items = new ArrayList<>();
@@ -22,46 +25,98 @@ public abstract class MACRepository<T extends MACModel> {
         load();
     }
 
-    ///FIXME: Default değerler için bir çözüm bulunmalı.
-    public boolean add(T item) {
-        if (item == null) 
-        return false;
-        
+    //Kontrol edildi
+    public T add(T item) {
+        if (item == null)
+        return null;
+
         item.setId(getCurrentId());
         item.setCreatedAt(LocalDateTime.now());
         item.setUpdatedAt(LocalDateTime.now());
+        
+        try {
+            for (Field field : getAllFields(modelClass)) {
+                field.setAccessible(true);
+                if (field.isAnnotationPresent(Default.class)) {
+                    Default defaultAnnotation = field.getAnnotation(Default.class);
+                    String defaultValue = defaultAnnotation.value();
+                    Class<?> type = field.getType();
+                    Object value = null;
+                    if (type == int.class || type == Integer.class) {
+                        value = Integer.parseInt(defaultValue);
+                    } else if (type == boolean.class || type == Boolean.class) {
+                        value = Boolean.parseBoolean(defaultValue);
+                    } else if (type == double.class || type == Double.class) {
+                        value = Double.parseDouble(defaultValue);
+                    } else if (type == float.class || type == Float.class) {
+                        value = Float.parseFloat(defaultValue);
+                    } else if (type == long.class || type == Long.class) {
+                        value = Long.parseLong(defaultValue);
+                    } else if (type == short.class || type == Short.class) {
+                        value = Short.parseShort(defaultValue);
+                    } else if (type == byte.class || type == Byte.class) {
+                        value = Byte.parseByte(defaultValue);
+                    } else if (type == char.class || type == Character.class) {
+                        value = defaultValue.length() > 0 ? defaultValue.charAt(0) : '\0';
+                    } else if (type == String.class) {
+                        value = defaultValue;
+                    } else if (type == java.time.LocalDateTime.class) {
+                        value = java.time.LocalDateTime.parse(defaultValue);
+                    }
+                    if (value != null && field.get(item) == null) {
+                        field.set(item, value);
+                    }
+                }
+
+                if(field.isAnnotationPresent(Unique.class)) {
+                    Unique uniqueAnnotation = field.getAnnotation(Unique.class);
+                    if (uniqueAnnotation != null) {
+                        field.setAccessible(true);
+                        Object fieldValue = field.get(item);
+                        for (T existingItem : items) {
+                            if (existingItem != null && fieldValue.equals(field.get(existingItem))) {
+                                throw new IllegalArgumentException("Unique constraint violated for field: " + field.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        }
+        
+
         items.add(item.getId(), item);
-        return true;
+        return findById(item.getId()).orElse(null);
     }
 
-    public boolean update(T item) {
+    //Kontrol edildi
+    public T update(T item) {
         if(item == null || !contains(item.getId()))
-        return false;
+            return null;
 
         item.setUpdatedAt(LocalDateTime.now());
-        int index = items.indexOf(item);
 
-        if (index != -1) {
-            items.set(index, item);
-            return true;
-        }
+        items.set(item.getId(), item);
 
-        return false;
+        return findById(item.getId()).orElse(null);
     }
 
+    //Kontrol edildi
     public boolean deleteById(int id) {
         if (!contains(id)) 
         return false;
         
         T item = findById(id).orElse(null);
         if (item != null) {
-            items.remove(item);
+            items.set(id, null);
             return true;
         }
         
         return false;
     }
 
+    //Kontrol edildi
     public Optional<T> findById(int id) {
         if (!contains(id)) 
         return Optional.empty();
@@ -81,13 +136,20 @@ public abstract class MACRepository<T extends MACModel> {
         return Optional.empty();
     }
 
+    //Kontrol edildi
+    public T getById(int id) {
+        return findById(id).orElse(null);
+    }
+
+    //Kontrol edildi
     public boolean contains(int id) {
         if (id < 0 || id >= items.size())
         return false;
         
-        return items.contains(id);
+        return items.get(id) != null;
     }
 
+    //Kontrol edildi
     public List<T> getAll() {
         List<T> allItems = new ArrayList<>();
         for (T item : items) {
@@ -102,6 +164,20 @@ public abstract class MACRepository<T extends MACModel> {
             }
         }
         return allItems;
+    }
+
+    //Kontrol edildi
+    public Optional<List<T>> findAll() {
+        List<T> allItems = getAll();
+        if (allItems.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(allItems);
+    }
+
+    //Kontrol edildi
+    public int count() {
+        return (int) items.stream().filter(item -> item != null).count();
     }
 
     ///TODO: Implement load method, (Şifrelenmiş veri varsa çözülmeli, deliminatöre dikkat edilmeli)

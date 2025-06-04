@@ -32,4 +32,24 @@ public class Follow extends MACModel {
         this.followingId = followingId;
     }
     
+    @Override
+    public Follow clone() {
+        Follow clonedFollow = new Follow();
+        clonedFollow.setId(this.getId());
+        clonedFollow.setCreatedAt(this.getCreatedAt());
+        clonedFollow.setUpdatedAt(this.getUpdatedAt());
+        clonedFollow.setFollowerId(this.getFollowerId());
+        clonedFollow.setFollowingId(this.getFollowingId());
+        return clonedFollow;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (!(obj instanceof Follow)) return false;
+        Follow follow = (Follow) obj;
+        return id == follow.id &&
+               followerId == follow.followerId &&
+               followingId == follow.followingId;
+    }
 }

@@ -2,8 +2,10 @@ package memento.core;
 
 import java.time.LocalDateTime;
 
-///TODO: MACRepository sınıfını test et.
-public abstract class MACModel {
+import memento.anatation.Unique;
+
+public abstract class MACModel implements Cloneable, Comparable<MACModel> {
+    @Unique
     protected int id;
 
     protected LocalDateTime createdAt;
@@ -33,5 +35,10 @@ public abstract class MACModel {
     @Override
     public MACModel clone() throws CloneNotSupportedException {
         return (MACModel) super.clone();
+    }
+
+    @Override
+    public int compareTo(MACModel other) {
+        return Integer.compare(this.id, other.id);
     }
 }

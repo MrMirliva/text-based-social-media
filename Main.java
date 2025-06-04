@@ -3,9 +3,13 @@ import java.util.Scanner;
 
 import models.User;
 import models.Post;
+import models.Follow;
+import models.Like;
 
 import repositories.UserRepository;
 import repositories.PostRepository;
+import repositories.FollowRepository;
+import repositories.LikeRepository;
 
 public class Main {
     ///DEPRECATED
@@ -14,6 +18,8 @@ public class Main {
         System.out.println("Test Methodları Menüsü:");
         System.out.println("1 - UserRepository test et");
         System.out.println("2 - PostRepository test et");
+        System.out.println("3 - FollowRepository test et");
+        System.out.println("4 - LikeRepository test et");
         System.out.println("9 - Çıkış");
         System.out.print("Bir seçim yapınız: ");
         int sayi = scanner.nextInt();
@@ -27,6 +33,14 @@ public class Main {
             System.out.println("PostRepository test ediliyor...");
             testPostRepository();
             break;
+            case 3:
+            System.out.println("FollowRepository test ediliyor...");
+            testFollowRepository();
+            break;
+            case 4:
+            System.out.println("LikeRepository test ediliyor...");
+            testLikeRepository();
+            break;
             case 9:
             System.out.println("Çıkış yapılıyor...");
             System.exit(0);
@@ -37,6 +51,7 @@ public class Main {
         scanner.close();
     }
 
+    ///START OF TEST REPOSITORY METHODS
 
     ///DEPRECATED
     private static void testUserRepository() {
@@ -155,6 +170,159 @@ public class Main {
     }
 
     ///DEPRECATED
+    private static void testFollowRepository() {
+        FollowRepository followRepository = new FollowRepository();
+
+        Follow f0 = new Follow(1, 2);
+        Follow f1 = new Follow(1, 3);
+        Follow f2 = new Follow(2, 4);
+        Follow f3 = new Follow(3, 2);
+        Follow f4 = new Follow(4, 2);
+        Follow f5 = new Follow(4, 3);
+
+        f0 = followRepository.add(f0);
+        f1 = followRepository.add(f1);
+        f2 = followRepository.add(f2);
+        f3 = followRepository.add(f3);
+        f4 = followRepository.add(f4);
+        f5 = followRepository.add(f5);
+
+        printFollow(f0);
+        printFollow(f1);
+        printFollow(f2);
+        printFollow(f3);
+        printFollow(f4);
+        printFollow(f5);
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followsByUser1 = followRepository.findByFollowerId(1);
+        System.out.println("Follows by user ID 1:");
+        for(Follow follow : followsByUser1) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followsByUser2 = followRepository.findByFollowerId(2);
+        System.out.println("Follows by user ID 2:");
+        for(Follow follow : followsByUser2) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followsByUser3 = followRepository.findByFollowerId(3);
+        System.out.println("Follows by user ID 3:");
+        for(Follow follow : followsByUser3) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followsByUser4 = followRepository.findByFollowerId(4);
+        System.out.println("Follows by user ID 4:");
+        for(Follow follow : followsByUser4) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followsByUser5 = followRepository.findByFollowerId(5);
+        System.out.println("Follows by user ID 5:");
+        for(Follow follow : followsByUser5) {
+            printFollow(follow);
+        }
+
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followingByUser6 = followRepository.findByFollowingId(1);
+        System.out.println("Following by user ID 1:");
+        for(Follow follow : followingByUser6) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followingByUser7 = followRepository.findByFollowingId(2);
+        System.out.println("Following by user ID 2:");
+        for(Follow follow : followingByUser7) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followingByUser8 = followRepository.findByFollowingId(3);
+        System.out.println("Following by user ID 3:");
+        for(Follow follow : followingByUser8) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followingByUser9 = followRepository.findByFollowingId(4);
+        System.out.println("Following by user ID 4:");
+        for(Follow follow : followingByUser9) {
+            printFollow(follow);
+        }
+
+        System.out.println("-----------------------------------------------------");
+        List<Follow> followingByUser10 = followRepository.findByFollowingId(5);
+        System.out.println("Following by user ID 5:");
+        for(Follow follow : followingByUser10) {
+            printFollow(follow);
+        }
+    }
+
+    ///DEPRECATED
+    private static void testLikeRepository() {
+        LikeRepository likeRepository = new LikeRepository();
+
+        Like l1 = new Like(0, 0);
+        Like l2 = new Like(1, 1);
+        Like l3 = new Like(2, 2);
+        Like l4 = new Like(0, 3);
+
+        l1 = likeRepository.add(l1);
+        l2 = likeRepository.add(l2);
+        l3 = likeRepository.add(l3);
+        l4 = likeRepository.add(l4);
+
+        printLike(l1);
+        printLike(l2);
+        printLike(l3);
+
+        if(likeRepository.exists(0, 0)) {
+            System.out.println("Like exists for post ID 0 and user ID 0.");
+        } else {
+            System.out.println("Like does not exist for post ID 0 and user ID 0.");
+        }
+
+        if(likeRepository.exists(1, 1)) {
+            System.out.println("Like exists for post ID 1 and user ID 1.");
+        } else {
+            System.out.println("Like does not exist for post ID 1 and user ID 1.");
+        }
+
+        if(likeRepository.exists(2, 2)) {
+            System.out.println("Like exists for post ID 2 and user ID 2.");
+        } else {
+            System.out.println("Like does not exist for post ID 2 and user ID 2.");
+        }
+
+        if(likeRepository.exists(3, 3)) {
+            System.out.println("Like exists for post ID 3 and user ID 3.");
+        } else {
+            System.out.println("Like does not exist for post ID 3 and user ID 3.");
+        }
+
+
+        System.out.println("Total likes for post ID 0: " + likeRepository.countByPostId(0));
+        System.out.println("Total likes for post ID 1: " + likeRepository.countByPostId(1));
+        System.out.println("Total likes for post ID 2: " + likeRepository.countByPostId(2));
+        System.out.println("Total likes for post ID 3: " + likeRepository.countByPostId(3));
+
+        System.out.println("Deleting likes for user ID 0 and post ID 0: " + likeRepository.deleteByUserIdAndPostId(0, 0));
+
+        System.out.println("Total likes for post ID 0 after deletion: " + likeRepository.countByPostId(0));
+    }
+    ///END OF TEST REPOSITORY METHODS
+
+    ///START OF PRINT METHODS
+
+    ///DEPRECATED
     private static void printUser(User a) {
         if(a != null) {
             System.out.println("User Full Name : " + a.getFullName() +
@@ -184,4 +352,36 @@ public class Main {
 
         System.out.println("Post not found.");
     }
+
+    ///DEPRECATED
+    private static void printFollow(Follow a) {
+        if(a != null) {
+            System.out.println("ID: " + a.getId() +
+                               ",\t Follower ID: " + a.getFollowerId() +
+                               ",\t Following ID: " + a.getFollowingId() +
+                               ",\t Created At: " + a.getCreatedAt().toString() +
+                               ",\t Updated At: " + a.getUpdatedAt().toString()
+            );
+            return;
+        }
+
+        System.out.println("Follow not found.");
+    }
+
+    ///DEPRECATED
+    private static void printLike(Like a) {
+        if(a != null) {
+            System.out.println("Like ID: " + a.getId() +
+                               ",\t User ID: " + a.getUserId() +
+                               ",\t Post ID: " + a.getPostId() +
+                               ",\t Created At: " + a.getCreatedAt().toString() +
+                               ",\t Updated At: " + a.getUpdatedAt().toString()
+            );
+            return;
+        }
+
+        System.out.println("Like not found.");
+}
+    ///END OF PRINT METHODS
+
 }

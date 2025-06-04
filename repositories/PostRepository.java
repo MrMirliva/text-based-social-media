@@ -4,6 +4,9 @@
  * This repository includes custom methods for querying posts, such as retrieving
  * all posts associated with a specific user.
  * 
+ * @see memento.core.MACRepository
+ * @see models.Post
+ * 
  * @author Mirliva (Abdullah Gündüz)
  * @version 1.0
  * @since 2025-06-04

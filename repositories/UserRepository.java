@@ -6,6 +6,9 @@
  * This class encapsulates the logic for accessing and manipulating User data,
  * ensuring a clean separation between data handling and business logic.
  * 
+ * @see memento.core.MACRepository
+ * @see models.User
+ * 
  * @author Mirliva (Abdullah Gündüz)
  * @version 1.0
  * @since 2025-06-04

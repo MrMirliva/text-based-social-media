@@ -1,7 +1,6 @@
-# Şimdilik test kodları (Main.java) ve deneme database'leri versionlamadan çıkartıldı.
+# Şimdilik deneme database'leri versionlamadan çıkartıldı.
 # Sor sürümler yaklaştıkça tekrar eklenebilir.
 database/
-Main.java
 
 # IntelliJ IDEA
 .vscode/

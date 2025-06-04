@@ -5,6 +5,7 @@ import java.util.List;
 import memento.core.MACRepository;
 import models.Follow;
 
+///DOC: FollowRepository class açıklaması ekle
 public class FollowRepository extends MACRepository<Follow> {
 
     public FollowRepository(Class<Follow> modelClass) {
@@ -12,12 +13,12 @@ public class FollowRepository extends MACRepository<Follow> {
     }
 
 
-    ///TODO: Implement the methods to interact with the database or data source
+    ///STUB: findByFrom metodunu tamamla
     public List<Follow> findByFrom() {
         return null;
     }
 
-    ///TODO: Implement the methods to interact with the database or data source
+    ///STUB: findByTo metodunu tamamla
     public List<Follow> findByTo() {
         return null;
     }

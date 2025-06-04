@@ -2,23 +2,27 @@ package repositories;
 
 import memento.core.MACRepository;
 import models.Like;
-
+///DOC:LikeRepository class açıklaması ekle
 public class LikeRepository extends MACRepository<Like> {
 
     public LikeRepository(Class<Like> modelClass) {
         super(modelClass);
     }
 
+    ///TO_VERIFY: exists methodunu kontrol et.
     public boolean exists(int postId, int userId) {
-        return true; // TODO: Implement the logic to check if a like exists for the given postId and userId
+        return getAll().stream()
+                .anyMatch(like -> like != null && like.getPostId() == postId && like.getUserId() == userId);
     }
 
+    ///STUB: countByPostId metodunu tamamla
     public int countByPostId(int postId) {
-        return 0; // TODO: Implement the logic to count likes for the given postId
+        return 0;
     }
 
+    ///STUB: deleteByUserIdAndPostId metodunu tamamla
     public boolean deleteByUserIdAndPostId(int userId, int postId) {
-        return true; // TODO: Implement the logic to delete a like by userId and postId
+        return true;
     }
     
 }

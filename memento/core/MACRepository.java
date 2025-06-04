@@ -1,3 +1,19 @@
+/**
+ * MACRepository is an abstract generic repository class for managing persistent storage of models
+ * that extend the MACModel class. It provides basic CRUD (Create, Read, Update, Delete) operations,
+ * unique constraint enforcement, default value assignment via annotations, and serialization/deserialization
+ * logic for saving and loading model data from a text file.
+ * <p>
+ * The repository uses reflection to handle model fields, supports custom annotations for default values
+ * and uniqueness, and ensures that all returned model instances are clones to prevent unintended modifications.
+ * <p>
+ * Subclasses should implement or extend this class to provide concrete repository logic for specific model types.
+ *
+ * @param <T> The type of MACModel this repository manages
+ * @author Mirliva (Abdullah Gündüz)
+ * @version 1.0
+ * @since 2025-06-04
+ */
 package memento.core;
 
 import java.time.LocalDateTime;
@@ -25,7 +41,16 @@ public abstract class MACRepository<T extends MACModel> {
         load();
     }
 
-    //Kontrol edildi
+    /**
+     * Adds an item to the repository.
+     * If the item is null, it returns null.
+     * If the item has a unique field that already exists in the repository, it throws an IllegalArgumentException.
+     * It sets the ID, createdAt, and updatedAt fields of the item.
+     * It also sets default values for fields annotated with @Default if they are null.
+     *
+     * @param item The item to add
+     * @return The added item or null if the input was null
+     */
     public T add(T item) {
         if (item == null)
         return null;
@@ -90,7 +115,14 @@ public abstract class MACRepository<T extends MACModel> {
         return findById(item.getId()).orElse(null);
     }
 
-    //Kontrol edildi
+    /**
+     * Updates an item in the repository.
+     * If the item is null or does not exist in the repository, it returns null.
+     * It updates the updatedAt field of the item.
+     *
+     * @param item The item to update
+     * @return The updated item or null if the input was null or the item does not exist
+     */
     public T update(T item) {
         if(item == null || !contains(item.getId()))
             return null;
@@ -102,7 +134,14 @@ public abstract class MACRepository<T extends MACModel> {
         return findById(item.getId()).orElse(null);
     }
 
-    //Kontrol edildi
+    /**
+     * Deletes an item by its ID.
+     * If the item does not exist, it returns false.
+     * If the item exists, it sets the item at that index to null and returns true.
+     *
+     * @param id The ID of the item to delete
+     * @return true if the item was deleted, false if it did not exist
+     */
     public boolean deleteById(int id) {
         if (!contains(id)) 
         return false;
@@ -116,7 +155,14 @@ public abstract class MACRepository<T extends MACModel> {
         return false;
     }
 
-    //Kontrol edildi
+    /**
+     * Finds an item by its ID.
+     * If the item does not exist, it returns an empty Optional.
+     * If the item exists, it returns a cloned version of the item wrapped in an Optional.
+     *
+     * @param id The ID of the item to find
+     * @return An Optional containing the cloned item if found, or empty if not found
+     */
     public Optional<T> findById(int id) {
         if (!contains(id)) 
         return Optional.empty();
@@ -136,12 +182,26 @@ public abstract class MACRepository<T extends MACModel> {
         return Optional.empty();
     }
 
-    //Kontrol edildi
+    /**
+     * Gets an item by its ID.
+     * If the item does not exist, it returns null.
+     * If the item exists, it returns a cloned version of the item.
+     *
+     * @param id The ID of the item to get
+     * @return The cloned item if found, or null if not found
+     */
     public T getById(int id) {
         return findById(id).orElse(null);
     }
 
-    //Kontrol edildi
+    /**
+     * Checks if an item with the given ID exists in the repository.
+     * If the ID is out of bounds, it returns false.
+     * If the item exists, it returns true; otherwise, it returns false.
+     *
+     * @param id The ID to check
+     * @return true if the item exists, false otherwise
+     */
     public boolean contains(int id) {
         if (id < 0 || id >= items.size())
         return false;
@@ -149,7 +209,13 @@ public abstract class MACRepository<T extends MACModel> {
         return items.get(id) != null;
     }
 
-    //Kontrol edildi
+    /**
+     * Gets all items in the repository.
+     * It returns a list of cloned items to avoid modifying the original items.
+     * If an item is null, it is skipped.
+     *
+     * @return A list of cloned items
+     */
     public List<T> getAll() {
         List<T> allItems = new ArrayList<>();
         for (T item : items) {
@@ -166,7 +232,13 @@ public abstract class MACRepository<T extends MACModel> {
         return allItems;
     }
 
-    //Kontrol edildi
+    /**
+     * Finds all items in the repository.
+     * If there are no items, it returns an empty Optional.
+     * If there are items, it returns a list of cloned items wrapped in an Optional.
+     *
+     * @return An Optional containing a list of cloned items if found, or empty if not found
+     */
     public Optional<List<T>> findAll() {
         List<T> allItems = getAll();
         if (allItems.isEmpty()) {
@@ -175,12 +247,18 @@ public abstract class MACRepository<T extends MACModel> {
         return Optional.of(allItems);
     }
 
-    //Kontrol edildi
+    /**
+     * Counts the number of items in the repository.
+     * It counts only non-null items.
+     *
+     * @return The count of non-null items
+     */
     public int count() {
         return (int) items.stream().filter(item -> item != null).count();
     }
 
-    ///TODO: Implement load method, (Şifrelenmiş veri varsa çözülmeli, deliminatöre dikkat edilmeli)
+    ///TODO: Implement load method to read data from file and populate the repository
+    ///TO_VERIFY: load methodunu kontrol et. Dosya okuma işlemi düzgün çalışıyor mu?
     private void load() {
 
         java.io.File file = new java.io.File(fileName);
@@ -234,7 +312,7 @@ public abstract class MACRepository<T extends MACModel> {
 
     }
 
-    ///TODO: Implement save method (Şifrelenecek veri varsa şifrelenmeli, deliminatöre dikkat edilmeli)
+    ///STUB: Implement save method to write data to file
     public void close() {
         
     }
@@ -246,7 +324,7 @@ public abstract class MACRepository<T extends MACModel> {
         return currentId;   
     }
 
-    //FIXME: Kaçınma sembolüne göre de splitlemeli
+    //REFACTOR: Split line into parts using the defined DELIMINATOR
     private String[] splitLine(String line) {
         return line.split(DELIMINATOR);
     }

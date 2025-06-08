@@ -14,6 +14,7 @@
 package repositories;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import memento.core.MACRepository;
 import models.Post;
@@ -34,7 +35,7 @@ public class PostRepository extends MACRepository<Post> {
     public List<Post> findByUserId(int userId) {
         List<Post> posts = getAll().stream()
             .filter(post -> post != null && post.getUserId() == userId)
-            .collect(java.util.stream.Collectors.toList());
+            .collect(Collectors.toList());
         return posts;
     }
     

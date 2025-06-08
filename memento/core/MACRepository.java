@@ -17,14 +17,21 @@
 package memento.core;
 
 import java.time.LocalDateTime;
+
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import memento.anatation.Default;
-import memento.anatation.Unique;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 import java.lang.reflect.Field;
+
+import memento.anatation.Default;
+import memento.anatation.Unique;
 
 public abstract class MACRepository<T extends MACModel> {
     
@@ -85,8 +92,8 @@ public abstract class MACRepository<T extends MACModel> {
                         value = defaultValue.length() > 0 ? defaultValue.charAt(0) : '\0';
                     } else if (type == String.class) {
                         value = defaultValue;
-                    } else if (type == java.time.LocalDateTime.class) {
-                        value = java.time.LocalDateTime.parse(defaultValue);
+                    } else if (type == LocalDateTime.class) {
+                        value = LocalDateTime.parse(defaultValue);
                     }
                     if (value != null && field.get(item) == null) {
                         field.set(item, value);
@@ -261,11 +268,11 @@ public abstract class MACRepository<T extends MACModel> {
     ///TO_VERIFY: load methodunu kontrol et. Dosya okuma işlemi düzgün çalışıyor mu?
     private void load() {
 
-        java.io.File file = new java.io.File(fileName);
+        File file = new File(fileName);
         if (!file.exists()) {
             return;
         }
-        try (java.io.BufferedReader reader = new java.io.BufferedReader(new java.io.FileReader(file))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String line = reader.readLine();
 
             if (line == null) {
@@ -306,7 +313,7 @@ public abstract class MACRepository<T extends MACModel> {
             }
 
             ///TODO: Data okuma işlemi yapılacak. Her bir obje için değişkenlerin atamaları çözülecek
-        } catch (java.io.IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 
@@ -391,7 +398,7 @@ public abstract class MACRepository<T extends MACModel> {
             case CHAR:
                 return type == char.class || type == Character.class;
             case LOCALDATETIME:
-                return type == java.time.LocalDateTime.class;
+                return type == .time.LocalDateTime.class;
             default:
                 return false;
         }

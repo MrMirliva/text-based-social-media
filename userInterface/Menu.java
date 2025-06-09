@@ -3,10 +3,17 @@ package userInterface;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Scanner;
+import service.PostService;
+import service.UserService;
+import service.LikeService;
 
 
 public class Menu {
     Profile profile;
+    private UserService userService;
+    private PostService postService;
+    private LikeService likeService;
+
     
 
     public Menu(Profile profile) {

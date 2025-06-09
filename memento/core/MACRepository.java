@@ -267,19 +267,35 @@ public abstract class MACRepository<T extends MACModel> {
         return (int) items.stream().filter(item -> item != null).count();
     }
 
-    ///DOC: This method is used to load data from a file into the repository.
+    ///REFACTOR: Column annotation is not used in this method, consider removing it or using it properly.
+    /**
+     * Loads data from the associated file into the repository.
+     * <p>
+     * This method reads the file specified by {@code fileName}, parses the header and type lines,
+     * and then reads each data row. For each row, it creates a new instance of the model class,
+     * sets its fields using reflection, and handles decryption for fields annotated with {@code @Encrypted}.
+     * The loaded objects are then added to the repository's internal list, ensuring the list size matches the IDs.
+     * </p>
+     * <ul>
+     *   <li>Reads headers and types from the first two lines of the file.</li>
+     *   <li>Parses each data row and converts string values to the appropriate field types.</li>
+     *   <li>Decrypts values for fields annotated with {@code @Encrypted}.</li>
+     *   <li>Populates the {@code items} list with the loaded objects, preserving their IDs.</li>
+     * </ul>
+     * If the file does not exist, the method returns immediately.
+     */
     private void load() {
         File file = new File(fileName);
         if (!file.exists()) {
             return;
         }
 
-        // Geçici veri saklama
+        // Temporary storage for data rows
         List<String[]> dataRows = new ArrayList<>();
         String[] headers;
         String[] types;
 
-        // 1️ Dosyayı oku, headers ve types satırlarını al, veri satırlarını dataRows'a ekle
+        // 1️ Read the file, extract headers and types, and add data rows to dataRows
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
             String headerLine = reader.readLine();
             if (headerLine == null) return;
@@ -287,7 +303,7 @@ public abstract class MACRepository<T extends MACModel> {
 
             String typeLine = reader.readLine();
             if (typeLine == null)
-                throw new IllegalArgumentException("Dosyada tip satırı bulunamadı");
+                throw new IllegalArgumentException("Type line not found in file");
             types = typeLine.split(Pattern.quote(DELIMINATOR), -1);
 
             String line;
@@ -299,7 +315,7 @@ public abstract class MACRepository<T extends MACModel> {
             return;
         }
 
-        // 2️ modelClass'teki Field'ları isim→Field map'ine yerleştir
+        // 2️ Map fields from modelClass by name
         List<Field> allFields = getAllFields(modelClass);
         Map<String, Field> fieldMap = new HashMap<>();
         for (Field f : allFields) {
@@ -307,7 +323,7 @@ public abstract class MACRepository<T extends MACModel> {
             fieldMap.put(f.getName(), f);
         }
 
-        // 3️ Her bir data satırı için yeni bir T örneği oluştur, alanları set et
+        // 3️ For each data row, create a new instance and set its fields
         List<T> loadedItems = new ArrayList<>();
         for (String[] row : dataRows) {
             try {
@@ -316,18 +332,18 @@ public abstract class MACRepository<T extends MACModel> {
                 for (int i = 0; i < headers.length; i++) {
                     Field field = fieldMap.get(headers[i]);
                     if (field == null) {
-                        throw new IllegalArgumentException("Header ile eşleşen alan bulunamadı: " + headers[i]);
+                        throw new IllegalArgumentException("No field found matching header: " + headers[i]);
                     }
 
-                    // 3.a) Ham string değeri al
+                    // 3.a) Get raw string value
                     String rawValue = row[i];
 
-                    // 3.b) Eğer @Encrypted varsa, decrypt et
+                    // 3.b) Decrypt if field is annotated with @Encrypted
                     if (field.isAnnotationPresent(Encrypted.class)) {
                         rawValue = CryptoUtil.decrypt(rawValue);
                     }
 
-                    // 3.c) String'i appropriate tipe dönüştür
+                    // 3.c) Convert string to appropriate type
                     Object convertedValue;
                     switch (types[i]) {
                         case "int":
@@ -340,10 +356,10 @@ public abstract class MACRepository<T extends MACModel> {
                             convertedValue = LocalDateTime.parse(rawValue);
                             break;
                         default:
-                            throw new IllegalArgumentException("Desteklenmeyen tip: " + types[i]);
+                            throw new IllegalArgumentException("Unsupported type: " + types[i]);
                     }
 
-                    // 3.d) Field'a set et
+                    // 3.d) Set value to field
                     field.set(obj, convertedValue);
                 }
 
@@ -354,7 +370,7 @@ public abstract class MACRepository<T extends MACModel> {
             }
         }
 
-        // 4️ Tüm yüklenen öğeleri items listesine ekle
+        // 4️ Add all loaded items to the items list, ensuring correct list size and IDs
         items.clear();
         
         for (T item : loadedItems) {
@@ -370,7 +386,7 @@ public abstract class MACRepository<T extends MACModel> {
         }
     }
     
-    ///REFACTOR: Column annotation is not used in this class, consider removing it or using it properly.
+    ///REFACTOR: Column annotation is not used in this method, consider removing it or using it properly.
     /**
      * The `close()` method writes data from a list of items to a file, encrypting certain fields if
      * they are annotated with `Encrypted`.
@@ -436,16 +452,12 @@ public abstract class MACRepository<T extends MACModel> {
         }
     }
 
+
     private int getCurrentId() {
         while (contains(currentId)) 
         currentId++;
         
         return currentId;   
-    }
-
-    //REFACTOR: Split line into parts using the defined DELIMINATOR
-    private String[] splitLine(String line) {
-        return line.split(DELIMINATOR);
     }
 
     public HeaderType convertHeaderType(String a) {
@@ -486,34 +498,6 @@ public abstract class MACRepository<T extends MACModel> {
         BYTE,
         CHAR,
         LOCALDATETIME
-    }
-
-    private boolean isFieldTypeCompatible(Field field, HeaderType headerType) {
-        Class<?> type = field.getType();
-        switch (headerType) {
-            case INT:
-                return type == int.class || type == Integer.class;
-            case STRING:
-                return type == String.class;
-            case BOOLEAN:
-                return type == boolean.class || type == Boolean.class;
-            case DOUBLE:
-                return type == double.class || type == Double.class;
-            case FLOAT:
-                return type == float.class || type == Float.class;
-            case LONG:
-                return type == long.class || type == Long.class;
-            case SHORT:
-                return type == short.class || type == Short.class;
-            case BYTE:
-                return type == byte.class || type == Byte.class;
-            case CHAR:
-                return type == char.class || type == Character.class;
-            case LOCALDATETIME:
-                return type == LocalDateTime.class;
-            default:
-                return false;
-        }
     }
 
     private List<Field> getAllFields(Class<?> clazz) {

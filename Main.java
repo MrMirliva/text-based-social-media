@@ -12,50 +12,68 @@ import repositories.FollowRepository;
 import repositories.LikeRepository;
 
 public class Main {
+
+    private static final UserRepository userRepository = new UserRepository();
+    private static final PostRepository postRepository = new PostRepository();
+    private static final FollowRepository followRepository = new FollowRepository();
+    private static final LikeRepository likeRepository = new LikeRepository();
+
     ///DEPRECATED
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Test Methodları Menüsü:");
-        System.out.println("1 - UserRepository test et");
-        System.out.println("2 - PostRepository test et");
-        System.out.println("3 - FollowRepository test et");
-        System.out.println("4 - LikeRepository test et");
-        System.out.println("9 - Çıkış");
-        System.out.print("Bir seçim yapınız: ");
-        int sayi = scanner.nextInt();
+        while (true) {
+            System.out.println("Test Methodları Menüsü:");
+            System.out.println("1 - UserRepository test et");
+            System.out.println("2 - PostRepository test et");
+            System.out.println("3 - FollowRepository test et");
+            System.out.println("4 - LikeRepository test et");
+            System.out.println("5 - Tüm Repository'leri test et");
+            System.out.println("9 - Çıkış");
+            System.out.print("Bir seçim yapınız: ");
+            int sayi = scanner.nextInt();
 
-        switch (sayi) {
-            case 1:
-            System.out.println("UserRepository test ediliyor...");
-            testUserRepository();
-            break;
-            case 2:
-            System.out.println("PostRepository test ediliyor...");
-            testPostRepository();
-            break;
-            case 3:
-            System.out.println("FollowRepository test ediliyor...");
-            testFollowRepository();
-            break;
-            case 4:
-            System.out.println("LikeRepository test ediliyor...");
-            testLikeRepository();
-            break;
-            case 9:
-            System.out.println("Çıkış yapılıyor...");
-            System.exit(0);
-            break;
-            default:
-            System.out.println("Farklı bir sayı girdiniz: " + sayi);
+            switch (sayi) {
+                case 1:
+                System.out.println("UserRepository test ediliyor...");
+                testUserRepository();
+                break;
+                case 2:
+                System.out.println("PostRepository test ediliyor...");
+                testPostRepository();
+                break;
+                case 3:
+                System.out.println("FollowRepository test ediliyor...");
+                testFollowRepository();
+                break;
+                case 4:
+                System.out.println("LikeRepository test ediliyor...");
+                testLikeRepository();
+                break;
+                case 5:
+                System.out.println("Tüm Repository'ler test ediliyor...");
+                testAllRepositories();
+                break;
+                case 9:
+                System.out.println("Çıkış yapılıyor...");
+                userRepository.close();
+                postRepository.close();
+                followRepository.close();
+                likeRepository.close();
+                System.out.println("Tüm repository'ler kapatıldı.");
+                System.out.println("Program sonlandırılıyor...");
+                scanner.close();
+                System.exit(0);
+                break;
+                default:
+                System.out.println("Farklı bir sayı girdiniz: " + sayi);
+            }
         }
-        scanner.close();
     }
 
     ///START OF TEST REPOSITORY METHODS
 
     ///DEPRECATED
     private static void testUserRepository() {
-        UserRepository userRepository = new UserRepository();
         User u1 = new User();
         u1.setFullName("John Doe");
         u1.setUsername("johndoe");
@@ -141,13 +159,10 @@ public class Main {
 
         User u7 = userRepository.findByUsername("janesmith").orElse(null);
         printUser(u7);
-
-        userRepository.close();
     }
 
     ///DEPRECATED
     private static void testPostRepository() {
-        PostRepository postRepository = new PostRepository();
 
         Post p1 = new Post();
         p1.setContent("This is the first post.");
@@ -169,13 +184,10 @@ public class Main {
         for(Post post : l1) {
             printPost(post);
         }
-
-        postRepository.close();
     }
 
     ///DEPRECATED
     private static void testFollowRepository() {
-        FollowRepository followRepository = new FollowRepository();
 
         Follow f0 = new Follow(1, 2);
         Follow f1 = new Follow(1, 3);
@@ -268,13 +280,10 @@ public class Main {
         for(Follow follow : followingByUser10) {
             printFollow(follow);
         }
-
-        followRepository.close();
     }
 
     ///DEPRECATED
     private static void testLikeRepository() {
-        LikeRepository likeRepository = new LikeRepository();
 
         Like l1 = new Like(0, 0);
         Like l2 = new Like(1, 1);
@@ -323,8 +332,29 @@ public class Main {
         System.out.println("Deleting likes for user ID 0 and post ID 0: " + likeRepository.deleteByUserIdAndPostId(0, 0));
 
         System.out.println("Total likes for post ID 0 after deletion: " + likeRepository.countByPostId(0));
-
-        likeRepository.close();
+    }
+    
+    private static void testAllRepositories() {
+        List<User> allUsers = userRepository.getAll();
+        System.out.println("All users in repository:");
+        for(User user : allUsers) {
+            printUser(user);
+        }
+        List<Post> allPosts = postRepository.getAll();
+        System.out.println("All posts in repository:");
+        for(Post post : allPosts) {
+            printPost(post);
+        }
+        List<Follow> allFollows = followRepository.getAll();
+        System.out.println("All follows in repository:");
+        for(Follow follow : allFollows) {
+            printFollow(follow);
+        }
+        List<Like> allLikes = likeRepository.getAll();
+        System.out.println("All likes in repository:");
+        for(Like like : allLikes) {
+            printLike(like);
+        }
     }
     ///END OF TEST REPOSITORY METHODS
 

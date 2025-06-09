@@ -1,6 +1,14 @@
 package service;
 
 import models.User;
+import models.Post;
+
+import java.util.Optional;
+
+import models.Like;
+import repositories.LikeRepository;
+import repositories.PostRepository;
+import responses.ResponseEnity;
 
 public class LikeService {
     private final LikeRepository likeRepository;
@@ -11,28 +19,28 @@ public class LikeService {
         this.postRepository = postRepository;
     }
 
-    public ResponseEntity<Boolean> likePost(User user, int postId) {
-         Post post = postRepository.findById(postId);
+    public ResponseEnity<Boolean> likePost(User user, int postId) {
+         Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
-            return new ResponseEntity<>(false, "Post not found", false);
+            return new ResponseEnity<>(false, false, "Post not found");
         }
 
         if (likeRepository.exists(user.getId(), postId)) {
-            return new ResponseEntity<>(false, "You already liked this post", false);
+            return new ResponseEnity<>(false, false, "You already liked this post");
         }
 
         Like like = new Like(user.getId(), postId);
         likeRepository.add(like);
-        return new ResponseEntity<>(true, "Post liked successfully", true);
+        return new ResponseEnity<>(true, true, "Post liked successfully");
     }
 
-    public ResponseEntity<Boolean> unlikePost(User user, int postId) {
+    public ResponseEnity<Boolean> unlikePost(User user, int postId) {
          if (!likeRepository.exists(user.getId(), postId)) {
-            return new ResponseEntity<>(false, "You have not liked this post", false);
+            return new ResponseEnity<>(false, false, "You have not liked this post");
         }
 
         likeRepository.deleteByUserIdAndPostId(user.getId(), postId);
-        return new ResponseEntity<>(true, "Like removed successfully", true);
+        return new ResponseEnity<>(true, true, "Like removed successfully");
     }
 
     public int getLikeCount(int postId) {

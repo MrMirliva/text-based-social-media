@@ -2,7 +2,7 @@ package service;
 
 import repositories.UserRepository;
 import models.User;
-import utils.ResponseEntity;
+import responses.ResponseEnity;
 
 public class UserService {
     private final UserRepository userRepository;
@@ -11,35 +11,35 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<User> viewProfile(User user) {
+    public ResponseEnity<User> viewProfile(User user) {
         if (user == null) {
-            return new ResponseEntity<>(null, "User not found", false);
+            return new ResponseEnity<>(null, false, "User not found");
         }
-        return new ResponseEntity<>(user, "Profile retrieved successfully", true);
+        return new ResponseEnity<>(user, true, "Profile retrieved successfully");
     }
 
-    public ResponseEntity<User> updateUsername(User user, String newUsername) {
+    public ResponseEnity<User> updateUsername(User user, String newUsername) {
         if (newUsername == null || newUsername.trim().isEmpty()) {
-            return new ResponseEntity<>(null, "Username cannot be empty", false);
+            return new ResponseEnity<>(null, false, "Username cannot be empty");
         }
 
         if (userRepository.findByUsername(newUsername) != null) {
-            return new ResponseEntity<>(null, "Username already exists", false);
+            return new ResponseEnity<>(null, false, "Username already exists");
         }
 
         user.setUsername(newUsername);
         userRepository.update(user);
-        return new ResponseEntity<>(user, "Username updated successfully", true);
+        return new ResponseEnity<>(user, true, "Username updated successfully");
     }
 
-    public ResponseEntity<User> updatePassword(User user, String newPassword) {
+    public ResponseEnity<User> updatePassword(User user, String newPassword) {
         if (newPassword == null || newPassword.length() < 4) {
-            return new ResponseEntity<>(null, "Password must be at least 4 characters", false);
+            return new ResponseEnity<>(null, false, "Password must be at least 4 characters");
         }
 
         user.setPassword(newPassword);
         userRepository.update(user);
-        return new ResponseEntity<>(user, "Password updated successfully", true);
+        return new ResponseEnity<>(user, true, "Password updated successfully");
     }
 }
     

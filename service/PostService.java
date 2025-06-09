@@ -1,9 +1,13 @@
 package service;
 
 import java.util.List;
+import java.util.Optional;
 
 import models.User;
 import repositories.UserRepository;
+import models.Post;
+import repositories.PostRepository;
+import responses.ResponseEnity;
 
 public class PostService {
     private final PostRepository postRepository;
@@ -14,47 +18,47 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public ResponseEntity<Post> createPost(User user, String content) {
+    public ResponseEnity<Post> createPost(User user, String content) {
         if (user == null || content == null || content.isEmpty()) {
-            return new ResponseEntity<>(null, "Invalid user or content", false);
+            return new ResponseEnity<>(null, false, "Invalid user or content");
         }
 
-        Post newPost = new Post(user.getId(), content);
+        Post newPost = new Post( content, user.getId());
         postRepository.add(newPost);
-        return new ResponseEntity<>(newPost, "Post created successfully", true);
+        return new ResponseEnity<>(newPost, true, "Post created successfully");
     }
 
-    public ResponseEntity<Post> editPost(User user, int postId, String newContent) {
-         Post post = postRepository.findById(postId);
+    public ResponseEnity<Post> editPost(User user, int postId, String newContent) {
+         Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
-            return new ResponseEntity<>(null, "Post not found", false);
+            return new ResponseEnity<>(null, false, "Post not found");
         }
 
-        if (!post.getUserId().equals(user.getId())) {
-            return new ResponseEntity<>(null, "You can only edit your own posts", false);
+        if (post.get().getUserId() != user.getId()) {
+            return new ResponseEnity<>(null, false, "You can only edit your own posts");
         }
 
-        post.setContent(newContent);
-        postRepository.update(post);
-        return new ResponseEntity<>(post, "Post updated successfully", true);
+        post.get().setContent(newContent);
+        postRepository.update(post.get());
+        return new ResponseEnity<>(post.get(), true, "Post updated successfully");
     }
 
-    public ResponseEntity<Boolean> deletePost(User user, int postId) {
-        Post post = postRepository.findById(postId);
+    public ResponseEnity<Boolean> deletePost(User user, int postId) {
+        Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
-            return new ResponseEntity<>(false, "Post not found", false);
+            return new ResponseEnity<>(false, false, "Post not found");
         }
 
-        if (!post.getUserId().equals(user.getId())) {
-            return new ResponseEntity<>(false, "You can only delete your own posts", false);
+        if (post.get().getUserId() != user.getId()) {
+            return new ResponseEnity<>(false, false, "You can only delete your own posts");
         }
 
-        postRepository.delete(post);
-        return new ResponseEntity<>(true, "Post deleted successfully", true);
+        postRepository.deleteById(postId);
+        return new ResponseEnity<>(true, true, "Post deleted successfully");
     }
 
-    public List<Post> getPostsByUserId(String userId) {
-        return postRepository.getPostsByUserId(userId);
+    public List<Post> getPostsByUserId(int userId) {
+        return postRepository.findByUserId(userId);
     }
 
     public List<Post> getLimitedPosts() {

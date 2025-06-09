@@ -7,6 +7,8 @@
  * <ul>
  *   <li>Find all Follow instances where a specific user is the follower.</li>
  *   <li>Find all Follow instances where a specific user is being followed.</li>
+ *   <li>Check if a specific follower is following a specific user.</li>
+ *   <li>Delete Follow entries based on follower and following user IDs.</li>
  * </ul>
  * </p>
  * 
@@ -60,4 +62,41 @@ public class FollowRepository extends MACRepository<Follow> {
                 .collect(Collectors.toList());
     }
     
+
+    /**
+     * The `exists` function checks if a specific follower is following a specific user.
+     * 
+     * @param followerId The `followerId` parameter represents the ID of the user who is following
+     * another user.
+     * @param followingId The `followingId` parameter represents the ID of the user that another user
+     * is following. In the context of the `exists` method you provided, it is used to check if a
+     * specific user (identified by `followerId`) is following another user (identified by
+     * `followingId`).
+     * @return The method `exists` returns a boolean value indicating whether there is a follow
+     * relationship between the `followerId` and `followingId` in the list of all follows.
+     */
+    public boolean exists(int followerId, int followingId) {
+        return getAll().stream()
+                .anyMatch(follow -> follow.getFollowerId() == followerId && follow.getFollowingId() == followingId);
+    }
+
+
+    /**
+     * This function deletes all follow entries where the followerId and followingId match the provided
+     * values.
+     * 
+     * @param followerId The `followerId` parameter represents the ID of the user who is following
+     * another user.
+     * @param followingId The `followingId` parameter represents the ID of the user that is being
+     * followed by another user. In the context of the `deleteByFollowerAndTarget` method, it is used
+     * to identify the user who is being followed by the user with the `followerId`.
+     */
+    public void deleteByFollowerAndTarget(int followerId, int followingId) {
+        List<Follow> followsToDelete = getAll().stream()
+                .filter(follow -> follow.getFollowerId() == followerId && follow.getFollowingId() == followingId)
+                .collect(Collectors.toList());
+        for (Follow follow : followsToDelete) {
+            deleteById(follow.getId());
+        }
+    }
 }

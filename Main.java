@@ -141,6 +141,8 @@ public class Main {
 
         User u7 = userRepository.findByUsername("janesmith").orElse(null);
         printUser(u7);
+
+        userRepository.close();
     }
 
     ///DEPRECATED
@@ -167,6 +169,8 @@ public class Main {
         for(Post post : l1) {
             printPost(post);
         }
+
+        postRepository.close();
     }
 
     ///DEPRECATED
@@ -264,6 +268,8 @@ public class Main {
         for(Follow follow : followingByUser10) {
             printFollow(follow);
         }
+
+        followRepository.close();
     }
 
     ///DEPRECATED
@@ -317,6 +323,8 @@ public class Main {
         System.out.println("Deleting likes for user ID 0 and post ID 0: " + likeRepository.deleteByUserIdAndPostId(0, 0));
 
         System.out.println("Total likes for post ID 0 after deletion: " + likeRepository.countByPostId(0));
+
+        likeRepository.close();
     }
     ///END OF TEST REPOSITORY METHODS
 

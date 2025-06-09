@@ -18,10 +18,12 @@ package memento.core;
 
 import java.time.LocalDateTime;
 
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.regex.Pattern;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -31,6 +33,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 
 import memento.anatation.Default;
+import memento.anatation.Encrypted;
 import memento.anatation.Unique;
 
 public abstract class MACRepository<T extends MACModel> {
@@ -264,64 +267,173 @@ public abstract class MACRepository<T extends MACModel> {
         return (int) items.stream().filter(item -> item != null).count();
     }
 
-    ///TODO: Implement load method to read data from file and populate the repository
-    ///TO_VERIFY: load methodunu kontrol et. Dosya okuma işlemi düzgün çalışıyor mu?
+    ///DOC: This method is used to load data from a file into the repository.
     private void load() {
-
         File file = new File(fileName);
         if (!file.exists()) {
             return;
         }
+
+        // Geçici veri saklama
+        List<String[]> dataRows = new ArrayList<>();
+        String[] headers;
+        String[] types;
+
+        // 1️ Dosyayı oku, headers ve types satırlarını al, veri satırlarını dataRows'a ekle
         try (BufferedReader reader = new BufferedReader(new FileReader(file))) {
-            String line = reader.readLine();
+            String headerLine = reader.readLine();
+            if (headerLine == null) return;
+            headers = headerLine.split(Pattern.quote(DELIMINATOR), -1);
 
-            if (line == null) {
-                return;
+            String typeLine = reader.readLine();
+            if (typeLine == null)
+                throw new IllegalArgumentException("Dosyada tip satırı bulunamadı");
+            types = typeLine.split(Pattern.quote(DELIMINATOR), -1);
+
+            String line;
+            while ((line = reader.readLine()) != null) {
+                dataRows.add(line.split(Pattern.quote(DELIMINATOR), -1));
             }
-
-            String[] headers = splitLine(line);
-            line = reader.readLine();
-
-            if (line == null) {
-                throw new IllegalArgumentException("No data found in file");
-            }
-
-            String[] types = splitLine(line);
-
-            if (headers.length != types.length) {
-                throw new IllegalArgumentException("Header count does not match type count");
-            }
-
-            List<Field> fields = getAllFields(modelClass);
-
-            if (fields.size() != headers.length) {
-                throw new IllegalArgumentException("Field count does not match header count");
-            }
-
-            for (int i = 0; i < headers.length; i++) {
-                Field field = fields.get(i);
-                String header = headers[i];
-                HeaderType headerType = convertHeaderType(types[i]);
-
-                if (!isFieldTypeCompatible(field, headerType)) {
-                    throw new IllegalArgumentException("Field type does not match header type : fieldType " + field.getType() + " headerType " + headerType + " fieldName " + field.getName() + " headerName " + header);
-                }
-
-                if (!header.equals(field.getName())) {
-                    throw new IllegalArgumentException("Header name does not match field name");
-                }
-            }
-
-            ///TODO: Data okuma işlemi yapılacak. Her bir obje için değişkenlerin atamaları çözülecek
         } catch (IOException e) {
             e.printStackTrace();
+            return;
         }
 
-    }
+        // 2️ modelClass'teki Field'ları isim→Field map'ine yerleştir
+        List<Field> allFields = getAllFields(modelClass);
+        Map<String, Field> fieldMap = new HashMap<>();
+        for (Field f : allFields) {
+            f.setAccessible(true);
+            fieldMap.put(f.getName(), f);
+        }
 
-    ///STUB: Implement save method to write data to file
-    public void close() {
+        // 3️ Her bir data satırı için yeni bir T örneği oluştur, alanları set et
+        List<T> loadedItems = new ArrayList<>();
+        for (String[] row : dataRows) {
+            try {
+                T obj = modelClass.getDeclaredConstructor().newInstance();
+
+                for (int i = 0; i < headers.length; i++) {
+                    Field field = fieldMap.get(headers[i]);
+                    if (field == null) {
+                        throw new IllegalArgumentException("Header ile eşleşen alan bulunamadı: " + headers[i]);
+                    }
+
+                    // 3.a) Ham string değeri al
+                    String rawValue = row[i];
+
+                    // 3.b) Eğer @Encrypted varsa, decrypt et
+                    if (field.isAnnotationPresent(Encrypted.class)) {
+                        rawValue = CryptoUtil.decrypt(rawValue);
+                    }
+
+                    // 3.c) String'i appropriate tipe dönüştür
+                    Object convertedValue;
+                    switch (types[i]) {
+                        case "int":
+                            convertedValue = Integer.parseInt(rawValue);
+                            break;
+                        case "String":
+                            convertedValue = rawValue;
+                            break;
+                        case "LocalDateTime":
+                            convertedValue = LocalDateTime.parse(rawValue);
+                            break;
+                        default:
+                            throw new IllegalArgumentException("Desteklenmeyen tip: " + types[i]);
+                    }
+
+                    // 3.d) Field'a set et
+                    field.set(obj, convertedValue);
+                }
+
+                loadedItems.add(obj);
+
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+
+        // 4️ Tüm yüklenen öğeleri items listesine ekle
+        items.clear();
         
+        for (T item : loadedItems) {
+            if (item == null) continue;
+            int id = item.getId();
+
+            while (items.size() <= id) {
+                items.add(null);
+            }
+
+            items.set(id, item);
+            currentId = Math.max(currentId, id + 1);
+        }
+    }
+    
+    ///REFACTOR: Column annotation is not used in this class, consider removing it or using it properly.
+    /**
+     * The `close()` method writes data from a list of items to a file, encrypting certain fields if
+     * they are annotated with `Encrypted`.
+     */
+    public void close() {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        try (var writer = new java.io.PrintWriter(file)) {
+            // Write headers
+            StringBuilder headerLine = new StringBuilder();
+            StringBuilder typeLine = new StringBuilder();
+
+            List<Field> fields = getAllFields(modelClass);
+            for (Field field : fields) {
+                headerLine.append(field.getName()).append(DELIMINATOR);
+                typeLine.append(field.getType().getSimpleName()).append(DELIMINATOR);
+            }
+
+            // Remove the last DELIMINATOR
+            if (headerLine.length() > 0) {
+                headerLine.setLength(headerLine.length() - DELIMINATOR.length());
+                typeLine.setLength(typeLine.length() - DELIMINATOR.length());
+            }
+
+            writer.println(headerLine.toString());
+            writer.println(typeLine.toString());
+
+            // Write data
+            for (T item : items) {
+                if (item == null) continue;
+                StringBuilder dataLine = new StringBuilder();
+                for (Field field : fields) {
+                    field.setAccessible(true);
+                    Object rawValue = field.get(item);
+                    String strValue = rawValue != null ? rawValue.toString() : "";
+
+
+                    // The above code is checking if the `field` has an annotation `Encrypted` present.
+                    // If the annotation is present, it encrypts the `strValue` using the
+                    // `CryptoUtil.encrypt` method.
+                    if (field.isAnnotationPresent(Encrypted.class)) {
+                        strValue = CryptoUtil.encrypt(strValue);
+                    }
+
+                    dataLine.append(strValue).append(DELIMINATOR);
+                }
+                // Remove the last DELIMINATOR
+                if (dataLine.length() > 0) {
+                    dataLine.setLength(dataLine.length() - DELIMINATOR.length());
+                }
+                writer.println(dataLine.toString());
+            }
+
+        } catch (IOException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
     }
 
     private int getCurrentId() {
@@ -398,7 +510,7 @@ public abstract class MACRepository<T extends MACModel> {
             case CHAR:
                 return type == char.class || type == Character.class;
             case LOCALDATETIME:
-                return type == .time.LocalDateTime.class;
+                return type == LocalDateTime.class;
             default:
                 return false;
         }

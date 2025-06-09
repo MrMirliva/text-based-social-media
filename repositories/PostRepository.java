@@ -16,7 +16,6 @@ package repositories;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import javafx.geometry.Pos;
 import memento.core.MACRepository;
 import models.Post;
 

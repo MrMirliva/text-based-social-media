@@ -60,7 +60,7 @@ public class AuthService {
         if(isAuthenticated(loginRequest.getCookie()).isOk()) {
             return new ResponseEnity<>(null, false, "User is already authenticated");
         }
-        if (userRepository.findByUsername(loginRequest.getUsername()) != null) {
+        if (userRepository.findByUsername(loginRequest.getUsername()).isPresent()) {
             return new ResponseEnity<>(null, false, "Username already exists");
         }
         if(fullName.contains(DELIMINATOR)) {

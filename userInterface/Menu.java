@@ -2,7 +2,12 @@ package userInterface;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Scanner;
+
+import models.Post;
+import models.User;
+import responses.ResponseEnity;
 import service.PostService;
 import service.UserService;
 import service.LikeService;
@@ -13,8 +18,10 @@ public class Menu {
     private final UserService userService;
     private final PostService postService;
     private final LikeService likeService;
+    private final HashMap<String,String> cookieHashMap;
 
-    public Menu(UserService userService, PostService postService, LikeService likeService, Profile profile) {
+    public Menu(HashMap<String,String> cookieHashMap,UserService userService, PostService postService, LikeService likeService, Profile profile) {
+        this.cookieHashMap = cookieHashMap;
         this.userService = userService;
         this.postService = postService;
         this.likeService = likeService;
@@ -36,8 +43,18 @@ public class Menu {
                 break;
             case 2:
                 System.out.println("Enter your post: ");
-                String post = scanner.nextLine();
-                postService.createPost(null, post);
+                Scanner scannerP = new Scanner(System.in);
+                String post = scannerP.nextLine();
+                 postService.createPost(null, post);
+                 ResponseEnity<Post> status = postService.createPost(null, post);
+                if (status.isOk()) {
+                    System.out.println("Post created successfully: " + status.getData().getContent());
+                }
+                 else
+                    System.out.println("Failed to create post: " + status.getMessage());
+
+                showMenu();
+
                 break;
             case 3:
                 seePosts();;
@@ -49,8 +66,7 @@ public class Menu {
                 refreshTimeLine();
                 break;
             case 6:
-                System.exit(0);
-                break;
+                return;
             default:
                 System.out.println("Invalid choice.");
         }

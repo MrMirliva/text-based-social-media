@@ -31,5 +31,13 @@ public class Main {
 
         System.out.println("User Interface initialized successfully!");
         userInterface.run();
+
+        userRepository.close();
+        postRepository.close();
+        followRepository.close();
+        likeRepository.close();
+        System.out.println("Thank you for using the Social Media Application!");
+        System.out.println("Exiting the application...");
+        System.exit(0);
     }
 }

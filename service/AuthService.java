@@ -49,12 +49,6 @@ public class AuthService {
         User newUser = new User(fullName, username, password); 
         userRepository.add(newUser);
 
-        ResponseEnity<User> a = login(cookie, username, password);
-
-        if (a.isError()) {
-            return new ResponseEnity<>(null, false, "Registration failed");
-        }
-
         return new ResponseEnity<User>(newUser, true, "Registration successful");
     }
 
@@ -96,7 +90,7 @@ public class AuthService {
     }
 
     ///TO_VERIFY
-    private ResponseEnity<User> getAuthenticatedUser(HashMap<String, String> cookie) {
+    public ResponseEnity<User> getAuthenticatedUser(HashMap<String, String> cookie) {
         if (isAuthenticated(cookie).isError()) {
             return new ResponseEnity<>(null, false, "User is not authenticated");
         }

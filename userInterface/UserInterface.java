@@ -77,7 +77,9 @@ public class UserInterface {
                 }*/
                 break;
             case 2:
+                scanner.close();
                 register();
+                
                 showMenu();
                 /*if (register()) {
                     System.out.println("You can now login.");
@@ -90,7 +92,6 @@ public class UserInterface {
             default:
                 System.out.println("Invalid choice.");
         }
-        
         scanner.close();
     }
     public void run() {

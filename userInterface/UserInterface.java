@@ -35,7 +35,13 @@ public class UserInterface {
 
         LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
 
-        authService.login(loginRequest);
+
+         ResponseEnity<User> status = authService.login( loginRequest);
+
+         if(status.isOk())
+          menu.showMenu();
+          else
+          System.out.println("Registration failed: " + status.getMessage());
 
         //return loggedIn;
     }
@@ -54,6 +60,16 @@ public class UserInterface {
 
         ResponseEnity<User> status = authService.register(fullName, loginRequest);
 
+        if(status.isOk()) {
+            System.out.println("Registration successful!");
+            showMenu();
+            //registered = true;
+        } else {
+            System.out.println("Registration failed: " + status.getMessage());
+        }
+
+
+
         //menu = new Menu(new Profile(username, password));
         //return registered;
     }
@@ -68,7 +84,6 @@ public class UserInterface {
         switch (choice) {
             case 1:
                 login();
-                menu.showMenu();
             /*     if (login()) {
                     System.out.println("You are now logged in.");
                     menu.showMenu();
@@ -88,7 +103,7 @@ public class UserInterface {
             default:
                 System.out.println("Invalid choice.");
         }
-
+        showMenu();
     }
     public void run() {
         System.out.println("Welcome to the User Interface!");

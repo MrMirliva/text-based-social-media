@@ -51,6 +51,9 @@ public class ResponseEnity<T> {
     public boolean isOk() {
         return isOk;
     }
+    public boolean isSuccess() {
+        return this.isOk;
+    }
     public void setOk(boolean isOk) {
         this.isOk = isOk;
     }

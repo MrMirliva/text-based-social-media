@@ -3,6 +3,7 @@ package userInterface;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.Scanner;
 
 import models.Post;
@@ -10,6 +11,7 @@ import models.User;
 import responses.ResponseEnity;
 import service.PostService;
 import service.UserService;
+import service.AuthService;
 import service.LikeService;
 
 
@@ -19,13 +21,15 @@ public class Menu {
     private final PostService postService;
     private final LikeService likeService;
     private final HashMap<String,String> cookieHashMap;
+    private final AuthService authService;
 
-    public Menu(HashMap<String,String> cookieHashMap,UserService userService, PostService postService, LikeService likeService, Profile profile) {
+    public Menu(HashMap<String,String> cookieHashMap,UserService userService, PostService postService, LikeService likeService, Profile profile, AuthService authService) {
         this.cookieHashMap = cookieHashMap;
         this.userService = userService;
         this.postService = postService;
         this.likeService = likeService;
         this.profile = profile;
+        this.authService = authService;
     }
 
     public void showMenu() {
@@ -45,8 +49,9 @@ public class Menu {
                 System.out.println("Enter your post: ");
                 Scanner scannerP = new Scanner(System.in);
                 String post = scannerP.nextLine();
-                 postService.createPost(null, post);
-                 ResponseEnity<Post> status = postService.createPost(null, post);
+                ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+                
+                 ResponseEnity<Post> status = postService.createPost(user.getData(), post);
                 if (status.isOk()) {
                     System.out.println("Post created successfully: " + status.getData().getContent());
                 }

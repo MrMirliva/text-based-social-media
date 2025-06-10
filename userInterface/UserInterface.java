@@ -36,7 +36,7 @@ public class UserInterface {
         LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
 
         authService.login(loginRequest);
-        scanner.close();
+
         //return loggedIn;
     }
     public void register() {
@@ -54,7 +54,6 @@ public class UserInterface {
 
         ResponseEnity<User> status = authService.register(fullName, loginRequest);
 
-        scanner.close();
         //menu = new Menu(new Profile(username, password));
         //return registered;
     }
@@ -65,6 +64,7 @@ public class UserInterface {
         System.out.println("3. Exit");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
+        
         switch (choice) {
             case 1:
                 login();
@@ -77,14 +77,10 @@ public class UserInterface {
                 }*/
                 break;
             case 2:
-                scanner.close();
+                
                 register();
                 
                 showMenu();
-                /*if (register()) {
-                    System.out.println("You can now login.");
-                    showMenu();
-                }*/
                 break;
             case 3:
                 System.exit(0);
@@ -92,7 +88,7 @@ public class UserInterface {
             default:
                 System.out.println("Invalid choice.");
         }
-        scanner.close();
+
     }
     public void run() {
         System.out.println("Welcome to the User Interface!");

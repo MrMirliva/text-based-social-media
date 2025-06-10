@@ -17,7 +17,6 @@ public class PostService {
         this.postRepository = postRepository;
     }
 
-    ///TO_VERIFY
     /**
      * This function creates a new post for a user.
      *

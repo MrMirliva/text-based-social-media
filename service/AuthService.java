@@ -20,7 +20,6 @@ public class AuthService {
         
     }
 
-    ///TO_VERIFY
     /**
      * This function handles the user login process.
      *
@@ -43,11 +42,11 @@ public class AuthService {
             return new ResponseEnity<User>(null, false, "Incorrect password");
         }
 
+        loginRequest.getCookie().put("userId", String.valueOf(user.get().getId()));
         return new ResponseEnity<User>(user.get(), true, "Login successful");
 
     }
 
-    ///TO_VERIFY
     /**
      * This function handles the user registration process.
      *
@@ -95,7 +94,6 @@ public class AuthService {
         return new ResponseEnity<>(true, true, "Logout successful");
     }
 
-    ///TO_VERIFY
     /**
      * This function checks if the user is authenticated based on the provided cookie.
      *
@@ -127,7 +125,6 @@ public class AuthService {
         return new ResponseEnity<>(true, true, "User is authenticated");
     }
 
-    ///TO_VERIFY
     /**
      * This function retrieves the authenticated user based on the provided cookie.
      *

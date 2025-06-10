@@ -35,7 +35,7 @@ public class AuthService {
 
         Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
 
-        if (user == null) {
+        if (!user.isPresent()) {
             return new ResponseEnity<User>(null, false, "User not found");
         }
 

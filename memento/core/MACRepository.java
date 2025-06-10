@@ -29,6 +29,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 
 import java.lang.reflect.Field;
 
@@ -401,7 +402,7 @@ public abstract class MACRepository<T extends MACModel> {
             }
         }
 
-        try (var writer = new java.io.PrintWriter(file)) {
+        try (PrintWriter writer = new PrintWriter(file)) {
             // Write headers
             StringBuilder headerLine = new StringBuilder();
             StringBuilder typeLine = new StringBuilder();

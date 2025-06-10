@@ -16,6 +16,7 @@
  */
 package requests;
 
+///XXX: BURASI NEDEN BÖYLE YAZILDI?
 public class PostRequest extends RootRequest {
     private String content;
     private String imageUrl;

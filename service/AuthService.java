@@ -11,6 +11,8 @@ import models.User;
 
 public class AuthService {
     private final UserRepository userRepository;
+    private final String DELIMINATOR = "<-!->";
+
     
 
     public AuthService(UserRepository userRepository) {
@@ -19,6 +21,13 @@ public class AuthService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function handles the user login process.
+     *
+     * @param loginRequest The login request object containing the username, password, and cookie information.
+     * @return Returns a ResponseEnity containing the authenticated user and a success message if the login is successful.
+     *         If the user is already authenticated, not found, or the password is incorrect, returns a ResponseEnity with an error message.
+     */
     public ResponseEnity<User> login(LoginRequest loginRequest) {
         if (isAuthenticated(loginRequest.getCookie()).isOk()) {
             return new ResponseEnity<>(null, false, "User is already authenticated");
@@ -39,12 +48,26 @@ public class AuthService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function handles the user registration process.
+     *
+     * @param fullName The full name of the user.
+     * @param loginRequest The login request object containing the username and password.
+     * @return Returns a ResponseEnity containing the registered user and a success message if the registration is successful.
+     *         If the user is already authenticated, or the username already exists, returns a ResponseEnity with an error message.
+     */
     public ResponseEnity<User> register(String fullName , LoginRequest loginRequest) {
         if(isAuthenticated(loginRequest.getCookie()).isOk()) {
             return new ResponseEnity<>(null, false, "User is already authenticated");
         }
         if (userRepository.findByUsername(loginRequest.getUsername()) != null) {
             return new ResponseEnity<>(null, false, "Username already exists");
+        }
+        if(fullName.contains(DELIMINATOR)) {
+            return new ResponseEnity<>(null, false, "Full name cannot contain the delimiter: " + DELIMINATOR);
+        }
+        if(loginRequest.getUsername().contains(DELIMINATOR)) {
+            return new ResponseEnity<>(null, false, "Username cannot contain the delimiter: " + DELIMINATOR);
         }
 
         User newUser = new User(fullName, loginRequest.getUsername(), loginRequest.getPassword());
@@ -54,6 +77,13 @@ public class AuthService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function handles the user logout process.
+     *
+     * @param cookie The cookie containing the userId of the authenticated user.
+     * @return Returns a ResponseEnity indicating whether the logout was successful or not.
+     *         If the user is not authenticated, returns a ResponseEnity with an error message.
+     */
     public ResponseEnity<?> logout(HashMap<String, String> cookie) {
 
         if (!isAuthenticated(cookie).isOk()) {
@@ -66,6 +96,13 @@ public class AuthService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function checks if the user is authenticated based on the provided cookie.
+     *
+     * @param cookie The cookie containing the userId of the authenticated user.
+     * @return Returns a ResponseEnity indicating whether the user is authenticated or not.
+     *         If the userId is not present or invalid, returns a ResponseEnity with an error message.
+     */
     public ResponseEnity<Boolean> isAuthenticated(HashMap<String, String> cookie) {
         if (!cookie.containsKey("userId")) {
             return new ResponseEnity<>(false, false, "User is not authenticated");
@@ -91,6 +128,13 @@ public class AuthService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function retrieves the authenticated user based on the provided cookie.
+     *
+     * @param cookie The cookie containing the userId of the authenticated user.
+     * @return Returns a ResponseEnity containing the authenticated user and a success message if the user is authenticated.
+     *         If the user is not authenticated, returns a ResponseEnity with an error message.
+     */
     public ResponseEnity<User> getAuthenticatedUser(HashMap<String, String> cookie) {
         if (isAuthenticated(cookie).isError()) {
             return new ResponseEnity<>(null, false, "User is not authenticated");

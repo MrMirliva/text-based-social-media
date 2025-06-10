@@ -20,7 +20,7 @@ public class Main {
         AuthService authService = new AuthService(userRepository);
         UserService userService = new UserService(userRepository, followRepository, postRepository);
         FollowService followService = new FollowService(followRepository);
-        PostService postService = new PostService(postRepository, userRepository);
+        PostService postService = new PostService(postRepository);
         LikeService likeService = new LikeService(likeRepository, postRepository);
 
         HashMap<String, String> cookieHashMap = new HashMap<>();

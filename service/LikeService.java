@@ -20,8 +20,15 @@ public class LikeService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function allows a user to like a post.
+     *
+     * @param user The user who is liking the post.
+     * @param postId The ID of the post to be liked.
+     * @return Returns a ResponseEnity indicating success or failure of the like operation.
+     */
     public ResponseEnity<Boolean> likePost(User user, int postId) {
-         Optional<Post> post = postRepository.findById(postId);
+        Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
             return new ResponseEnity<>(false, false, "Post not found");
         }
@@ -36,8 +43,15 @@ public class LikeService {
     }
 
     ///TO_VERIFY
+    /**
+     * This function allows a user to unlike a post.
+     *
+     * @param user The user who is unliking the post.
+     * @param postId The ID of the post to be unliked.
+     * @return Returns a ResponseEnity indicating success or failure of the unlike operation.
+     */
     public ResponseEnity<Boolean> unlikePost(User user, int postId) {
-         if (!likeRepository.exists(user.getId(), postId)) {
+        if (!likeRepository.exists(user.getId(), postId)) {
             return new ResponseEnity<>(false, false, "You have not liked this post");
         }
 
@@ -45,6 +59,13 @@ public class LikeService {
         return new ResponseEnity<>(true, true, "Like removed successfully");
     }
 
+    ///TO_VERIFY
+    /**
+     * This function retrieves the count of likes for a specific post.
+     *
+     * @param postId The ID of the post whose like count is to be retrieved.
+     * @return Returns the number of likes for the specified post.
+     */
     public int getLikeCount(int postId) {
         return likeRepository.countByPostId(postId);
     }

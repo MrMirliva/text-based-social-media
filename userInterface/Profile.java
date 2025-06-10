@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import models.User;
+import responses.ResponseEnity;
 import service.PostService;
 import service.AuthService;
 import service.UserService;
@@ -60,7 +61,7 @@ public class Profile {
     }*/
     public void profileMenu() {
         // Use a visible method that returns ResponseEntity<User>
-        var response = authService.getAuthenticatedUser(cookieHashMap);
+        ResponseEnity<User> response = authService.getAuthenticatedUser(cookieHashMap);
         User authUser = null;
         if (response.isOk()) {
             authUser = response.getData();

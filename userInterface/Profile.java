@@ -19,7 +19,7 @@ public class Profile {
 
     private final UserService userService;
     private final PostService postService;
-    private final FollowService fallowService;
+    private final FollowService followService;
     private final AuthService authService;
     private final HashMap<String,String> cookieHashMap;
     private Boolean loggedOutBoolean = false;
@@ -27,12 +27,12 @@ public class Profile {
     public Profile(HashMap<String,String> cookiHashMap,
                     UserService userService, 
                     PostService postService,
-                    FollowService fallowService, 
+                    FollowService followService, 
                     AuthService authService
         ) {
         this.userService = userService;
         this.postService = postService;
-        this.fallowService = fallowService;
+        this.followService = followService;
         this.authService = authService;
         this.cookieHashMap = cookiHashMap;
     }
@@ -81,10 +81,11 @@ public class Profile {
 
         System.out.println("1. Change UserName");
         System.out.println("2. Change Password");
-        System.out.println("3. See friends count");
-        System.out.println("4. See Posts");
-        System.out.println("5. Back to main menu");
-        System.out.println("6. Log Out");
+        System.out.println("3. See Posts");
+        System.out.println("4. See friends count");
+        System.out.println("5. follow/unfollow");
+        System.out.println("6. Back to main menu");
+        System.out.println("7. Log Out");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt(); 
         switch (choice) {
@@ -115,7 +116,7 @@ public class Profile {
                 }
 
                 break;
-            case 3:
+            case 4:
                 profileResponseEntity = userService.viewProfile(authUser);
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
@@ -126,22 +127,26 @@ public class Profile {
                 //seeFallowing 
                 profileMenu();
                 break;
-            case 4:
+            case 3:
                 profileResponseEntity = userService.viewProfile(authUser);
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
                     System.out.println("Posts:");
                     for (Post post : profileResponse.getPosts()) {
                         System.out.println(" - Post ID: " + post.getId() + ", Content: " + post.getContent());
+                        System.out.println("Posted by User ID: " + post.getUserId());
+                        System.out.println("Posted at: " + post.getCreatedAt());
+                        System.out.println("--------------------------------------------------");
                     }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());}
                 profileMenu();    
                 break;
             case 5:
-                // Assuming you have a Menu class to handle the main menu
+                followThings();
+                profileMenu();
                 return; // or menu.showMenu();  
-            case 6:
+            case 7:
                 logOut();
                 return;
             default:
@@ -164,5 +169,61 @@ public class Profile {
         public Boolean getLoggedOutBoolean() {
             return loggedOutBoolean;
         }
+public void unfollow(String username) {
+    /*ResponseEnity<User> response = followService.follow(null, 0);
+    User targetUser = userRepository.findByUsername(username);
+    if (targetUser == null) {
+        System.out.println("User not found: " + username);
+        return;
+    }
+
+    ResponseEnity<?> response = fallowService.unfollow(currentUser, targetUser.getId());
+    if (response.isOk()) {
+        System.out.println("Unfollowed user: " + targetUser.getUsername());
+    } else {
+        System.out.println("Failed to unfollow user: " + response.getMessage());
+    }*/
+}
+
+public void follow(String username) {
+    /*User targetUser = userRepository.findByUsername(username);
+    if (targetUser == null) {
+        System.out.println("User not found: " + username);
+        return;
+    }
+
+    ResponseEnity<Boolean> response = fallowService.follow(currentUser, targetUser.getId());
+    if (response.isOk()) {
+        System.out.println("Followed user: " + targetUser.getUsername());
+    } else {
+        System.out.println("Failed to follow user: " + response.getMessage());
+    }*/
+}
+
+public void followThings() {
+    System.out.println("1: follow ");
+    System.out.println("2: unfollow ");
+    System.out.println("3: Back to profile menu");
+    Scanner scanner = new Scanner(System.in);
+    int choice = scanner.nextInt();
+    scanner.nextLine(); // Consume newline
+
+    System.out.println("Enter the username: ");
+    String username = scanner.nextLine();
+
+    if (choice == 1) {
+        follow(username);
+    } else if (choice == 2) {
+        unfollow(username);}
+        else if (choice == 3) {
+        System.out.println("Exiting to profile menu.");
+        profileMenu();
+    } else {
+        System.out.println("Invalid choice.");
+        followThings();
+    }
+}
+
+
     
 }

@@ -89,6 +89,9 @@ public class Menu {
             for (Post post : posts) {
                 System.out.println("Post ID: " + post.getId() + ", Content: " + post.getContent());
                 System.out.println("Likes: " + likeService.getLikeCount(post.getId()));
+                System.out.println("Posted by User ID: " + post.getUserId());
+                System.out.println("Posted at: " + post.getCreatedAt());
+                System.out.println("--------------------------------------------------");
             }
         } else {
             System.out.println("Failed to retrieve posts: " + status.getMessage());

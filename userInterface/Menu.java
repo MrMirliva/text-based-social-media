@@ -43,7 +43,7 @@ public class Menu {
                 seePosts();;
                 break;
             case 4:
-                profile.seeFallowers();
+                //profile.seeFallowers();
                 break;
             case 5:
                 refreshTimeLine();
@@ -65,23 +65,25 @@ public class Menu {
     public void seeFallowingPosts() {
     }
     public void refreshTimeLine() {
-        ArrayList<String> posts = profile.getPosts();
+       /*  ArrayList<String> posts = profile.getPosts();
         for (int i = 0; i < posts.size(); i++) {
             System.out.println(posts.get(i));
-        }
+        }*/
     }
     public void seePostsMenu() {
         System.out.println("1. see a post by Post ID");
         System.out.println("2. see posts by User ID");
         System.out.println("3. see your posts");
-        System.out.println("4. Back to Main Menu");
+        System.out.println("4. see timeline posts");
+        System.out.println("5. see posts by Fallowing");
+        System.out.println("6. Back to Main Menu");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         switch (choice) {
             case 1:
                 System.out.println("Enter Post ID: ");
                 int postId = scanner.nextInt();
-                postService.getPostById(postId);
+               // postService.getPostById(postId);
                 break;
             case 2:
                 System.out.println("Enter User ID: ");
@@ -89,9 +91,15 @@ public class Menu {
                 postService.getPostsByUserId(userId);
                 break;
             case 3:
-                postService.getPostsByUserId(profile.getUser().getId());
+                //postService.getPostsByUserId(profile.getUser().getId());
                 break;
             case 4:
+                postService.getLimitedPosts();
+                break;
+            case 5:
+                //profile.seeFallowingPosts();
+                break;
+            case 6:
                 showMenu();
                 break;
             default:

@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import models.Post;
 import models.User;
+import responses.ProfileResponse;
 import responses.ResponseEnity;
 import service.PostService;
 import service.UserService;
@@ -42,17 +43,19 @@ public class Menu {
         System.out.println("6. Exit");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
+        ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
         switch (choice) {
             case 1:
-                seeProfile();;
+                seeProfile(user.getData());
+                showMenu();
                 break;
             case 2:
                 System.out.println("Enter your post: ");
                 Scanner scannerP = new Scanner(System.in);
                 String post = scannerP.nextLine();
-                ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
                 
-                 ResponseEnity<Post> status = postService.createPost(user.getData(), post);
+                
+                ResponseEnity<Post> status = postService.createPost(user.getData(), post);
                 if (status.isOk()) {
                     System.out.println("Post created successfully: " + status.getData().getContent());
                 }
@@ -91,8 +94,21 @@ public class Menu {
             System.out.println("Failed to retrieve posts: " + status.getMessage());
         }
     }
-    public void seeProfile() {
-        userService.viewProfile(null);
+    public void seeProfile(User user) {
+        ResponseEnity<ProfileResponse> response = userService.viewProfile(user);
+        if (response.isOk()) {
+            ProfileResponse profileResponse = response.getData();
+            System.out.println("User ID: " + profileResponse.getUserId());
+            System.out.println("Username: " + profileResponse.getUsername());
+            System.out.println("Full Name: " + profileResponse.getFullName());
+            System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
+            System.out.println("Posts:");
+            for (Post post : profileResponse.getPosts()) {
+                System.out.println(" - Post ID: " + post.getId() + ", Content: " + post.getContent());
+            }
+        } else {
+            System.out.println("Failed to retrieve profile: " + response.getMessage());
+    };
         
     }
     public void seeFallowingPosts() {

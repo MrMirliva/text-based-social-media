@@ -99,4 +99,34 @@ public class FollowRepository extends MACRepository<Follow> {
             deleteById(follow.getId());
         }
     }
+
+    /**
+     * This function counts the number of followers for a given followingId.
+     * 
+     * @param followingId The `followingId` parameter represents the ID of the user who is being
+     * followed by other users. In the context of the `numOfFollowers` method, it is used to count how
+     * many users are following the specified user.
+     * @return The method `numOfFollowers` returns the count of follows where the `followingId` matches
+     * the provided `followingId`.
+     */
+    public int numOfFollowers(int followingId) {
+        return (int) getAll().stream()
+                .filter(follow -> follow.getFollowingId() == followingId)
+                .count();
+    }
+
+    /**
+     * This function counts the number of followers for a given followerId.
+     * 
+     * @param followerId The `followerId` parameter represents the ID of the user who is following
+     * other users. In the context of the `numOfFollowing` method, it is used to count how many users
+     * the specified follower is following.
+     * @return The method `numOfFollowing` returns the count of follows where the `followerId` matches
+     * the provided `followerId`.
+     */
+    public int numOfFollowing(int followerId) {
+        return (int) getAll().stream()
+                .filter(follow -> follow.getFollowerId() == followerId)
+                .count();
+    }
 }

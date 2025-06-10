@@ -62,7 +62,8 @@ public class Menu {
 
                 break;
             case 3:
-                seePosts();;
+                seePosts();
+                showMenu();
                 break;
             case 4:
                 //profile.seeFallowers();

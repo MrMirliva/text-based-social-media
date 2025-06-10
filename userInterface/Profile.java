@@ -4,29 +4,35 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import models.User;
+import service.PostService;
+import service.AuthService;
+import service.UserService;
+import service.FollowService;
+
 public class Profile {
-    private String userName;
-    private String password;
-    private ArrayList<String> fallowers;
-    private ArrayList<String> posts;
-    private HashMap cookieHashMap;//????
 
-    
-    public Profile() {
-    }
-    public Profile(String userName, String password) {
-        this.userName = userName;
-        this.password = password;
-    }
-    public String getUserName() {
-        return userName;
+    private final UserService userService;
+    private final PostService postService;
+    private final FollowService fallowService;
+    private final AuthService authService;
+    private final HashMap<String,String> cookieHashMap;
+
+    public Profile(HashMap<String,String> cookiHashMap,
+                    UserService userService, 
+                    PostService postService,
+                    FollowService fallowService, 
+                    AuthService authService
+        ) {
+        this.userService = userService;
+        this.postService = postService;
+        this.fallowService = fallowService;
+        this.authService = authService;
+        this.cookieHashMap = cookiHashMap;
     }
 
-    public String getPassword() {
-        return password;
-    }
 
-    public ArrayList<String> getFallowers() {
+   /*  public ArrayList<String> getFallowers() {
         return fallowers;
     }
     public void setFallowers(ArrayList<String> fallowers) {
@@ -39,13 +45,6 @@ public class Profile {
         this.posts = posts;
     }
 
-    
-    public void changeUserName(String userName) {
-        this.userName = userName;
-    }
-    public void changePassword(String password) {
-        this.password = password;
-    }
     public void seeFallowers() {
         for (int i = 0; i < fallowers.size(); i++) {
             System.out.println(fallowers.get(i));
@@ -58,8 +57,19 @@ public class Profile {
     }
     public void logOut() {
         System.out.println("You have been logged out");
-    }
+    }*/
     public void profileMenu() {
+        // Use a visible method that returns ResponseEntity<User>
+        var response = authService.getAuthenticatedUser(cookieHashMap);
+        User authUser = null;
+        if (response.isOk()) {
+            authUser = response.getData();
+        } else {
+            //TODO: Handle the case where the user is not authenticated
+            System.out.println("You are not authenticated.");
+            return;
+        }
+
         System.out.println("1. Change UserName");
         System.out.println("2. Change Password");
         System.out.println("3. See Fallowers");
@@ -72,26 +82,30 @@ public class Profile {
             case 1:
                 System.out.println("Enter new UserName: ");
                 String newUserName = scanner.next();
-                changeUserName(newUserName);
+                userService.updateUsername(authUser, newUserName);
                 System.out.println("UserName changed to: " + newUserName);
                 break;
             case 2:
                 System.out.println("Enter new Password: ");
                 String newPassword = scanner.next();
-                changePassword(newPassword);
+                userService.updatePassword(authUser, newPassword);
                 System.out.println("Password changed successfully.");
                 break;
             case 3:
-                seeFallowers();
+                int followerCount = fallowService.getFollowerCount(authUser.getId());
+                System.out.println("You have " + followerCount + " followers.");
                 break;
             case 4:
                 // seeFallowing(); // Implement this method if needed
                 break;
             case 5:
-                seePosts();
+                postService.getPostsByUserId(authUser.getId()).forEach(post -> {
+                    System.out.println("Post ID: " + post.getId());
+                    System.out.println("Content: " + post.getContent());
+                });
                 break;
             case 6:
-                logOut();
+                authService.logout(cookieHashMap);
                 break;
             default:
                 System.out.println("Invalid choice.");

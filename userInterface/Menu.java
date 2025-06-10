@@ -9,14 +9,15 @@ import service.LikeService;
 
 
 public class Menu {
-    Profile profile;
-    private UserService userService;
-    private PostService postService;
-    private LikeService likeService;
+    private final Profile profile;
+    private final UserService userService;
+    private final PostService postService;
+    private final LikeService likeService;
 
-    
-
-    public Menu(Profile profile) {
+    public Menu(UserService userService, PostService postService, LikeService likeService, Profile profile) {
+        this.userService = userService;
+        this.postService = postService;
+        this.likeService = likeService;
         this.profile = profile;
     }
 
@@ -31,15 +32,15 @@ public class Menu {
         int choice = scanner.nextInt();
         switch (choice) {
             case 1:
-                seeProfile();
+                seeProfile();;
                 break;
             case 2:
                 System.out.println("Enter your post: ");
                 String post = scanner.nextLine();
-                createPost(post);
+                postService.createPost(null, post);
                 break;
             case 3:
-                seePosts();
+                seePosts();;
                 break;
             case 4:
                 profile.seeFallowers();
@@ -56,21 +57,10 @@ public class Menu {
     }
 
     public void seePosts() {
-        ArrayList<String> posts = profile.getPosts();
-        for (int i = 0; i < posts.size(); i++) {
-            System.out.println(posts.get(i));
-        }
+        postService.getLimitedPosts();
     }
     public void seeProfile() {
-        System.out.println("UserName: " + profile.getUserName());
-        System.out.println("Password: " + profile.getPassword());
-        System.out.println("Fallowers: " + profile.getFallowers());
-        System.out.println("Posts: " + profile.getPosts());
-    }
-    public void createPost(String post) {
-        ArrayList<String> posts = profile.getPosts();
-        posts.add(post);
-        profile.setPosts(posts);
+        userService.viewProfile(null);
     }
     public void seeFallowingPosts() {
     }
@@ -78,6 +68,34 @@ public class Menu {
         ArrayList<String> posts = profile.getPosts();
         for (int i = 0; i < posts.size(); i++) {
             System.out.println(posts.get(i));
+        }
+    }
+    public void seePostsMenu() {
+        System.out.println("1. see a post by Post ID");
+        System.out.println("2. see posts by User ID");
+        System.out.println("3. see your posts");
+        System.out.println("4. Back to Main Menu");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        switch (choice) {
+            case 1:
+                System.out.println("Enter Post ID: ");
+                int postId = scanner.nextInt();
+                postService.getPostById(postId);
+                break;
+            case 2:
+                System.out.println("Enter User ID: ");
+                int userId = scanner.nextInt();
+                postService.getPostsByUserId(userId);
+                break;
+            case 3:
+                postService.getPostsByUserId(profile.getUser().getId());
+                break;
+            case 4:
+                showMenu();
+                break;
+            default:
+                System.out.println("Invalid choice.");
         }
     }
     

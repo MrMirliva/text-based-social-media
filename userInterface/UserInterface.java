@@ -98,8 +98,7 @@ public class UserInterface {
                 showMenu();
                 break;
             case 3:
-                System.exit(0);
-                break;
+                return; // Exit the application
             default:
                 System.out.println("Invalid choice.");
         }

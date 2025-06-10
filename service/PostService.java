@@ -8,6 +8,7 @@ import repositories.UserRepository;
 import models.Post;
 import repositories.PostRepository;
 import responses.ResponseEnity;
+import helper.RandomNumberGenerator;
 
 public class PostService {
     private final PostRepository postRepository;
@@ -18,7 +19,9 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
+    ///TO_VERIFY ///REFACTOR:<-!->
     public ResponseEnity<Post> createPost(User user, String content) {
+
         if (user == null || content == null || content.isEmpty()) {
             return new ResponseEnity<>(null, false, "Invalid user or content");
         }
@@ -28,6 +31,7 @@ public class PostService {
         return new ResponseEnity<>(newPost, true, "Post created successfully");
     }
 
+     ///TO_VERIFY ///REFACTOR:<-!->
     public ResponseEnity<Post> editPost(User user, int postId, String newContent) {
          Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
@@ -43,6 +47,7 @@ public class PostService {
         return new ResponseEnity<>(post.get(), true, "Post updated successfully");
     }
 
+     ///TO_VERIFY ///REFACTOR:<-!->
     public ResponseEnity<Boolean> deletePost(User user, int postId) {
         Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
@@ -57,11 +62,19 @@ public class PostService {
         return new ResponseEnity<>(true, true, "Post deleted successfully");
     }
 
+     ///TO_VERIFY ///REFACTOR:<-!->
     public List<Post> getPostsByUserId(int userId) {
         return postRepository.findByUserId(userId);
     }
 
+     ///TO_VERIFY ///REFACTOR:<-!->
     public List<Post> getLimitedPosts() {
-        return null;
+        int min = 0;
+        int max = postRepository.getMaxId();
+        int numberOf = Math.min(30, postRepository.count());
+        ///TO_VERIFY: new int kısmı sorun çıkartabilir.
+        List<Integer> randomIds = RandomNumberGenerator.generateRandomInt(min, max, numberOf, new int[]{});
+
+        return postRepository.getByIds(randomIds);
     }
 }

@@ -19,6 +19,7 @@ public class LikeService {
         this.postRepository = postRepository;
     }
 
+    ///TO_VERIFY
     public ResponseEnity<Boolean> likePost(User user, int postId) {
          Optional<Post> post = postRepository.findById(postId);
         if (post == null) {
@@ -34,6 +35,7 @@ public class LikeService {
         return new ResponseEnity<>(true, true, "Post liked successfully");
     }
 
+    ///TO_VERIFY
     public ResponseEnity<Boolean> unlikePost(User user, int postId) {
          if (!likeRepository.exists(user.getId(), postId)) {
             return new ResponseEnity<>(false, false, "You have not liked this post");

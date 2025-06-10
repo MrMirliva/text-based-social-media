@@ -1,6 +1,7 @@
 package service;
 
 import repositories.UserRepository;
+import requests.LoginRequest;
 
 import java.util.HashMap;
 import java.util.Optional;
@@ -18,18 +19,18 @@ public class AuthService {
     }
 
     ///TO_VERIFY
-    public ResponseEnity<User> login(HashMap<String, String> cookie ,String username, String password) {
-        if (isAuthenticated(cookie).isOk()) {
+    public ResponseEnity<User> login(LoginRequest loginRequest) {
+        if (isAuthenticated(loginRequest.getCookie()).isOk()) {
             return new ResponseEnity<>(null, false, "User is already authenticated");
         }
 
-        Optional<User> user = userRepository.findByUsername(username);
+        Optional<User> user = userRepository.findByUsername(loginRequest.getUsername());
 
         if (user == null) {
             return new ResponseEnity<User>(null, false, "User not found");
         }
 
-        if (!user.get().getPassword().equals(password)) {
+        if (!user.get().getPassword().equals(loginRequest.getPassword())) {
             return new ResponseEnity<User>(null, false, "Incorrect password");
         }
 
@@ -38,15 +39,15 @@ public class AuthService {
     }
 
     ///TO_VERIFY
-    public ResponseEnity<User> register(HashMap<String, String> cookie ,String fullName, String username, String password) {
-        if(isAuthenticated(cookie).isOk()) {
+    public ResponseEnity<User> register(String fullName , LoginRequest loginRequest) {
+        if(isAuthenticated(loginRequest.getCookie()).isOk()) {
             return new ResponseEnity<>(null, false, "User is already authenticated");
         }
-        if (userRepository.findByUsername(username) != null) {
+        if (userRepository.findByUsername(loginRequest.getUsername()) != null) {
             return new ResponseEnity<>(null, false, "Username already exists");
         }
 
-        User newUser = new User(fullName, username, password); 
+        User newUser = new User(fullName, loginRequest.getUsername(), loginRequest.getPassword());
         userRepository.add(newUser);
 
         return new ResponseEnity<User>(newUser, true, "Registration successful");

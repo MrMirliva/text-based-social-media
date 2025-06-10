@@ -44,11 +44,14 @@ public abstract class MACRepository<T extends MACModel> {
     private final String fileName;
     private final String DELIMINATOR = "<-!->";
 
+    ///REFACTOR ///TODO: Bir Map ile varibleName -> Field eşlemesi yaparak Column anatation'unu kullandırtabilirim. Bunu updateColumns methodu yazarak yapabilirim.
+
     private int currentId = 0;
 
     public MACRepository(Class<T> modelClass) {
         this.modelClass = modelClass;
         this.fileName = "database\\" + modelClass.getSimpleName() + ".txt";
+        ///TOTO: updateColumns() yazılarak Column anatation'unu kullanabilirim.
         load();
     }
 

@@ -3,6 +3,7 @@ package userInterface;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import java.util.Scanner;
 
@@ -80,9 +81,19 @@ public class Menu {
 
     public void seePosts() {
         postService.getLimitedPosts();
+        ResponseEnity<List<Post>> status = postService.getLimitedPosts();
+        if (status.isOk()) {
+            List<Post> posts = status.getData();
+            for (Post post : posts) {
+                System.out.println("Post ID: " + post.getId() + ", Content: " + post.getContent());
+            }
+        } else {
+            System.out.println("Failed to retrieve posts: " + status.getMessage());
+        }
     }
     public void seeProfile() {
         userService.viewProfile(null);
+        
     }
     public void seeFallowingPosts() {
     }

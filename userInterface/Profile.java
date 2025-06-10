@@ -93,17 +93,19 @@ public class Profile {
                 System.out.println("Password changed successfully.");
                 break;
             case 3:
-                int followerCount = fallowService.getFollowerCount(authUser.getId());
-                System.out.println("You have " + followerCount + " followers.");
+                //int followerCount = fallowService.getFollowerCount(authUser.getId());
+                //System.out.println("You have " + followerCount + " followers.");
                 break;
             case 4:
                 // seeFallowing(); // Implement this method if needed
                 break;
             case 5:
-                postService.getPostsByUserId(authUser.getId()).forEach(post -> {
-                    System.out.println("Post ID: " + post.getId());
-                    System.out.println("Content: " + post.getContent());
-                });
+               // postService.getPostsByUserId(authUser.getId()).forEach(post -> {
+                //    System.out.println("Post ID: " + post.getId());
+                //    System.out.println("Content: " + post.getContent());
+                //}
+                //)
+                ;
                 break;
             case 6:
                 authService.logout(cookieHashMap);

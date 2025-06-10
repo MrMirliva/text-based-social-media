@@ -4,17 +4,22 @@ import java.util.Scanner;
 
 import models.User;
 import repositories.UserRepository;
+import requests.LoginRequest;
+import responses.ResponseEnity;
 import service.AuthService;
 
 public class UserInterface {    
     private final AuthService authService;
-            
+    private final Menu menu;
+    private final HashMap<String,String> cookieHashMap;
 
-    UserInterface(AuthService authService) {
+    public UserInterface(HashMap<String,String> cookiHashMap,AuthService authService, Menu menu) {
+        this.cookieHashMap = cookiHashMap;
+        this.menu = menu;
         this.authService = authService;
         // Initialize the AuthService or any other services if needed
     }
-    Menu menu;
+    
    // HashMap<String, String> cookieHashMap;  
    
 
@@ -27,7 +32,10 @@ public class UserInterface {
         String username = scanner.nextLine();
         System.out.println("Enter your password: ");
         String password = scanner.nextLine();
-        authService.login(username, password);
+
+        LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
+
+        authService.login(loginRequest);
         scanner.close();
         //return loggedIn;
     }
@@ -42,10 +50,12 @@ public class UserInterface {
         System.out.println("Enter your password: ");
         String password = scanner.nextLine();
 
-        authService.register(fullName,username, password);
+        LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
+
+        ResponseEnity<User> status = authService.register(fullName, loginRequest);
 
         scanner.close();
-        menu = new Menu(new Profile(username, password));
+        //menu = new Menu(new Profile(username, password));
         //return registered;
     }
 
@@ -80,6 +90,11 @@ public class UserInterface {
             default:
                 System.out.println("Invalid choice.");
         }
+        
         scanner.close();
+    }
+    public void run() {
+        System.out.println("Welcome to the User Interface!");
+        showMenu();
     }
 }

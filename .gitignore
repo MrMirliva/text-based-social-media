@@ -1,6 +1,7 @@
 # Şimdilik deneme database'leri versionlamadan çıkartıldı.
 # Sor sürümler yaklaştıkça tekrar eklenebilir.
 database/
+notes/
 
 # IntelliJ IDEA
 .vscode/

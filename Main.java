@@ -6,7 +6,7 @@ import userInterface.*;
 
 public class Main {
 
-    ///DEPRECATED
+    ///DOC
     public static void main(String[] args) {
 
         System.out.println("Welcome to the Social Media Application!");
@@ -26,7 +26,7 @@ public class Main {
         HashMap<String, String> cookieHashMap = new HashMap<>();
 
         Profile profile = new Profile(cookieHashMap, userService, postService, followService, authService);
-        Menu menu = new Menu(userService, postService, likeService, profile);
+        Menu menu = new Menu(cookieHashMap, userService, postService, likeService, profile);
         UserInterface userInterface = new UserInterface(cookieHashMap, authService, menu);
 
         System.out.println("User Interface initialized successfully!");

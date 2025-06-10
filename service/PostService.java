@@ -98,8 +98,8 @@ public class PostService {
       * @param userId The ID of the user whose posts are to be retrieved.
       * @return Returns a list of posts made by the specified user.
       */
-    public List<Post> getPostsByUserId(int userId) {
-        return postRepository.findByUserId(userId);
+    public ResponseEnity<List<Post>> getPostsByUserId(int userId) {
+        return new ResponseEnity<>(postRepository.findByUserId(userId), true, "Posts retrieved successfully");
     }
 
      ///TO_VERIFY
@@ -109,13 +109,13 @@ public class PostService {
       * @return Returns a list of up to 30 random posts.
       *         If there are fewer than 30 posts, it returns all available posts.
       */
-    public List<Post> getLimitedPosts() {
+    public ResponseEnity<List<Post>> getLimitedPosts() {
         int min = 0;
         int max = postRepository.getMaxId();
         int numberOf = Math.min(30, postRepository.count());
         ///TO_VERIFY: new int kısmı sorun çıkartabilir.
         List<Integer> randomIds = RandomNumberGenerator.generateRandomInt(min, max, numberOf, new int[]{});
 
-        return postRepository.getByIds(randomIds);
+        return new ResponseEnity<>(postRepository.getByIds(randomIds), true, "Posts retrieved successfully");
     }
 }

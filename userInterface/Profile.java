@@ -4,7 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
+import javax.lang.model.util.ElementScanner14;
+
+import models.Post;
 import models.User;
+import responses.ProfileResponse;
 import responses.ResponseEnity;
 import service.PostService;
 import service.AuthService;
@@ -18,6 +22,7 @@ public class Profile {
     private final FollowService fallowService;
     private final AuthService authService;
     private final HashMap<String,String> cookieHashMap;
+    private Boolean loggedOutBoolean = false;
 
     public Profile(HashMap<String,String> cookiHashMap,
                     UserService userService, 
@@ -65,17 +70,20 @@ public class Profile {
         User authUser = null;
         if (response.isOk()) {
             authUser = response.getData();
+
         } else {
             //TODO: Handle the case where the user is not authenticated
             System.out.println("You are not authenticated.");
             return;
         }
+        ResponseEnity<ProfileResponse> profileResponseEntity;
+        ResponseEnity<User> profileSettings;
 
         System.out.println("1. Change UserName");
         System.out.println("2. Change Password");
-        System.out.println("3. See Fallowers");
-        System.out.println("4. See Fallowing");
-        System.out.println("5. See Posts");
+        System.out.println("3. See friends count");
+        System.out.println("4. See Posts");
+        System.out.println("5. Back to main menu");
         System.out.println("6. Log Out");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt(); 
@@ -83,36 +91,78 @@ public class Profile {
             case 1:
                 System.out.println("Enter new UserName: ");
                 String newUserName = scanner.next();
-                userService.updateUsername(authUser, newUserName);
-                System.out.println("UserName changed to: " + newUserName);
+                profileSettings = userService.updateUsername(authUser, newUserName);
+                if (profileSettings.isError()) {
+                    System.out.println("Failed to change UserName: " + profileSettings.getMessage());
+                    profileMenu();
+                } else{
+                    System.out.println("UserName changed to: " + newUserName);
+                    logOut();
+                    return;
+                }
                 break;
             case 2:
                 System.out.println("Enter new Password: ");
                 String newPassword = scanner.next();
-                userService.updatePassword(authUser, newPassword);
-                System.out.println("Password changed successfully.");
+                profileSettings = userService.updatePassword(authUser, newPassword);
+                if (profileSettings.isError()) {
+                    System.out.println("Failed to change Password: " + profileSettings.getMessage());
+                    profileMenu();
+                }else{
+                    System.out.println("Password changed successfully.");
+                    logOut();
+                    return;
+                }
+
                 break;
             case 3:
-                //int followerCount = fallowService.getFollowerCount(authUser.getId());
-                //System.out.println("You have " + followerCount + " followers.");
+                profileResponseEntity = userService.viewProfile(authUser);
+                if (profileResponseEntity.isOk()) {
+                    ProfileResponse profileResponse = profileResponseEntity.getData();
+                    System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
+                } else {
+                    System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());
+                }
+                //seeFallowing 
+                profileMenu();
                 break;
             case 4:
-                // seeFallowing(); // Implement this method if needed
+                profileResponseEntity = userService.viewProfile(authUser);
+                if (profileResponseEntity.isOk()) {
+                    ProfileResponse profileResponse = profileResponseEntity.getData();
+                    System.out.println("Posts:");
+                    for (Post post : profileResponse.getPosts()) {
+                        System.out.println(" - Post ID: " + post.getId() + ", Content: " + post.getContent());
+                    }
+                } else {
+                    System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());}
+                profileMenu();    
                 break;
             case 5:
-               // postService.getPostsByUserId(authUser.getId()).forEach(post -> {
-                //    System.out.println("Post ID: " + post.getId());
-                //    System.out.println("Content: " + post.getContent());
-                //}
-                //)
-                ;
-                break;
+                // Assuming you have a Menu class to handle the main menu
+                return; // or menu.showMenu();  
             case 6:
-                authService.logout(cookieHashMap);
-                break;
+                logOut();
+                return;
             default:
                 System.out.println("Invalid choice.");
         }
     }
+
+        public boolean logOut() {
+        ResponseEnity<?> response = authService.logout(cookieHashMap);
+        if (response.isOk()) {
+            System.out.println("You have been logged out successfully.");
+        } else {
+            System.out.println("Failed to log out: " + response.getMessage());
+        }
+        loggedOutBoolean = true;
+        return false;
+    }
+
+
+        public Boolean getLoggedOutBoolean() {
+            return loggedOutBoolean;
+        }
     
 }

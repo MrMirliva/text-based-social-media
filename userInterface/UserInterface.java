@@ -40,8 +40,10 @@ public class UserInterface {
 
          if(status.isOk())
           menu.showMenu();
-          else
-          System.out.println("Registration failed: " + status.getMessage());
+          else{
+          System.out.println("login failed: " + status.getMessage());
+          showMenu();
+        }
 
         //return loggedIn;
     }
@@ -62,14 +64,12 @@ public class UserInterface {
 
         if(status.isOk()) {
             System.out.println("Registration successful!");
-            showMenu();
+
             //registered = true;
         } else {
             System.out.println("Registration failed: " + status.getMessage());
         }
-
-
-
+        showMenu();
         //menu = new Menu(new Profile(username, password));
         //return registered;
     }
@@ -79,30 +79,27 @@ public class UserInterface {
         System.out.println("2. Register");
         System.out.println("3. Exit");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        int choice;
+        if(!menu.isWillExit())
+            choice = 3; // If the user is logged out, default to exit
+        else {
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+        }
         
         switch (choice) {
             case 1:
                 login();
-            /*     if (login()) {
-                    System.out.println("You are now logged in.");
-                    menu.showMenu();
-                } else {
-                    System.out.println("Login failed.");
-                }*/
                 break;
-            case 2:
-                
+            case 2:                
                 register();
-                
-                showMenu();
                 break;
             case 3:
                 return; // Exit the application
             default:
                 System.out.println("Invalid choice.");
+                showMenu();
         }
-        showMenu();
     }
     public void run() {
         System.out.println("Welcome to the User Interface!");

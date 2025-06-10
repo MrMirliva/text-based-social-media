@@ -24,6 +24,7 @@ public class Menu {
     private final LikeService likeService;
     private final HashMap<String,String> cookieHashMap;
     private final AuthService authService;
+    private boolean willExit = true;
 
     public Menu(HashMap<String,String> cookieHashMap,UserService userService, PostService postService, LikeService likeService, Profile profile, AuthService authService) {
         this.cookieHashMap = cookieHashMap;
@@ -35,12 +36,11 @@ public class Menu {
     }
 
     public void showMenu() {
-        System.out.println("1. See Profile");
+        willExit = profile.getLoggedOutBoolean();
+        if(!willExit){
+                    System.out.println("1. See Profile");
         System.out.println("2. Create Post");
-        System.out.println("3. See Posts");
-        System.out.println("4. See Fallowers");
-        System.out.println("5. Refresh TimeLine");
-        System.out.println("6. Exit");
+        System.out.println("3. Post Things");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
@@ -66,29 +66,29 @@ public class Menu {
 
                 break;
             case 3:
-                seePosts();
+                postThings();
                 showMenu();
                 break;
-            case 4:
-                //profile.seeFallowers();
-                break;
             case 5:
-                refreshTimeLine();
+                //refreshTimeLine();
                 break;
-            case 6:
-                return;
             default:
                 System.out.println("Invalid choice.");
+                showMenu();
+        }
+        }else{
+            return;
         }
     }
 
-    public void seePosts() {
+    public void timeLine() {
         postService.getLimitedPosts();
         ResponseEnity<List<Post>> status = postService.getLimitedPosts();
         if (status.isOk()) {
             List<Post> posts = status.getData();
             for (Post post : posts) {
                 System.out.println("Post ID: " + post.getId() + ", Content: " + post.getContent());
+                System.out.println("Likes: " + likeService.getLikeCount(post.getId()));
             }
         } else {
             System.out.println("Failed to retrieve posts: " + status.getMessage());
@@ -101,11 +101,9 @@ public class Menu {
             System.out.println("User ID: " + profileResponse.getUserId());
             System.out.println("Username: " + profileResponse.getUsername());
             System.out.println("Full Name: " + profileResponse.getFullName());
-            System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
-            System.out.println("Posts:");
-            for (Post post : profileResponse.getPosts()) {
-                System.out.println(" - Post ID: " + post.getId() + ", Content: " + post.getContent());
-            }
+            
+            profile.profileMenu();
+
         } else {
             System.out.println("Failed to retrieve profile: " + response.getMessage());
     };
@@ -113,47 +111,108 @@ public class Menu {
     }
     public void seeFallowingPosts() {
     }
-    public void refreshTimeLine() {
-       /*  ArrayList<String> posts = profile.getPosts();
-        for (int i = 0; i < posts.size(); i++) {
-            System.out.println(posts.get(i));
-        }*/
-    }
-    public void seePostsMenu() {
-        System.out.println("1. see a post by Post ID");
-        System.out.println("2. see posts by User ID");
-        System.out.println("3. see your posts");
-        System.out.println("4. see timeline posts");
-        System.out.println("5. see posts by Fallowing");
-        System.out.println("6. Back to Main Menu");
+
+    public void postThings() {
+        System.out.println("1. see timeline posts");
+        System.out.println("2. like/unlike posts");
+        System.out.println("3. see posts by User ID");       
+        System.out.println("3. see posts by Fallowing");
+        System.out.println("4. Back to Main Menu");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
+        ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
         switch (choice) {
             case 1:
-                System.out.println("Enter Post ID: ");
-                int postId = scanner.nextInt();
-               // postService.getPostById(postId);
+                timeLine();
+                postThings();
                 break;
             case 2:
-                System.out.println("Enter User ID: ");
-                int userId = scanner.nextInt();
-                postService.getPostsByUserId(userId);
+                likeThings(user.getData());
+                postThings();
                 break;
             case 3:
-                //postService.getPostsByUserId(profile.getUser().getId());
+                System.out.println("Enter User ID to see posts: ");
+                Scanner scannerId = new Scanner(System.in);
+                int userId = scannerId.nextInt();
+                ResponseEnity<List<Post>> status = postService.getPostsByUserId(userId);
+                if (status.isOk()) {
+                    List<Post> posts = status.getData();
+                    if (posts.isEmpty()) {
+                        System.out.println("No posts found for User ID: " + userId);
+                    } else {
+                        for (Post post : posts) {
+                            System.out.println("Post ID: " + post.getId() + ", Content: " + post.getContent());
+                            System.out.println("Likes: " + likeService.getLikeCount(post.getId()));
+                        }
+                    }
+                } else {
+                    System.out.println("Failed to retrieve posts: " + status.getMessage());
+                }
+                postThings();
                 break;
             case 4:
-                postService.getLimitedPosts();
+                //seeFallowingPosts();
+                //postThings();
                 break;
             case 5:
-                //profile.seeFallowingPosts();
-                break;
-            case 6:
                 showMenu();
                 break;
             default:
                 System.out.println("Invalid choice.");
+                postThings();
         }
     }
-    
+    public void likePost(User user) {
+        System.out.println("Enter Post ID to like: ");
+        Scanner scanner = new Scanner(System.in);
+        int postId = scanner.nextInt();
+        ResponseEnity<Boolean> status = likeService.likePost(user, postId);
+        if (status.isOk()) {
+            System.out.println("Post liked successfully. Like count: " + likeService.getLikeCount(postId));
+        } else {
+            System.out.println("Failed to like post: " + status.getMessage());
+        }
+    }
+    public void unlikePost(User user) {
+        System.out.println("Enter Post ID to unlike: ");
+        Scanner scanner = new Scanner(System.in);
+        int postId = scanner.nextInt();
+        ResponseEnity<Boolean> status = likeService.unlikePost(user, postId);
+        if (status.isOk()) {
+            System.out.println("Post unliked successfully. Like count: " + likeService.getLikeCount(postId));
+        } else {
+            System.out.println("Failed to unlike post: " + status.getMessage());
+        }
+    }
+    public void likeThings(User user) {
+        System.out.println("1. Like a Post");
+        System.out.println("2. Unlike a Post");
+        System.out.println("3. Back to Main Menu");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        switch (choice) {
+            case 1:
+                likePost(user);
+                break;
+            case 2:
+                unlikePost(user);
+                break;
+            case 3:
+                showMenu();
+                break;
+            default:
+                System.out.println("Invalid choice.");
+                likeThings(user);
+        }
+    }
+
+    public boolean isWillExit() {
+        return willExit;
+    }    
 }
+   /* public void refreshTimeLine() {
+        ArrayList<String> posts = profile.getPosts();
+        for (int i = 0; i < posts.size(); i++) {
+            System.out.println(posts.get(i));
+        }
+    }*/

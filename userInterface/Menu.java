@@ -84,13 +84,22 @@ public class Menu {
     public void timeLine() {
         postService.getLimitedPosts();
         ResponseEnity<List<Post>> status = postService.getLimitedPosts();
+        
         if (status.isOk()) {
             List<Post> posts = status.getData();
             for (Post post : posts) {
-                System.out.println("Post ID: " + post.getId() + ", Content: " + post.getContent());
-                System.out.println("Likes: " + likeService.getLikeCount(post.getId()));
-                System.out.println("Posted by User ID: " + post.getUserId());
+                HashMap<String, String> postUser = new HashMap<>();
+                postUser.put("userId", String.valueOf(post.getUserId()));                
+                ResponseEnity<User> user = authService.getAuthenticatedUser(postUser);
+                ResponseEnity<Integer> likeCount = likeService.getLikeCount(post.getId());
+
+                System.out.println("Posted by User ID: " + post.getUserId() + " Username: " + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
+                System.out.println("Post ID: " + post.getId());
+                System.out.println("Content: " + post.getContent());
+                System.out.println("Likes: " + (likeCount.isOk() ? likeCount.getData() : "Error retrieving like count"));
+                System.out.println();
                 System.out.println("Posted at: " + post.getCreatedAt());
+
                 System.out.println("--------------------------------------------------");
             }
         } else {
@@ -170,8 +179,13 @@ public class Menu {
         Scanner scanner = new Scanner(System.in);
         int postId = scanner.nextInt();
         ResponseEnity<Boolean> status = likeService.likePost(user, postId);
+                ResponseEnity<Integer> likeCountStatus = likeService.getLikeCount(postId);
+        if (!likeCountStatus.isOk()) {
+            System.out.println("Failed to retrieve like count: " + likeCountStatus.getMessage());
+            return;
+        }
         if (status.isOk()) {
-            System.out.println("Post liked successfully. Like count: " + likeService.getLikeCount(postId));
+            System.out.println("Post liked successfully. Like count: " + likeCountStatus.getData());
         } else {
             System.out.println("Failed to like post: " + status.getMessage());
         }
@@ -181,8 +195,13 @@ public class Menu {
         Scanner scanner = new Scanner(System.in);
         int postId = scanner.nextInt();
         ResponseEnity<Boolean> status = likeService.unlikePost(user, postId);
+        ResponseEnity<Integer> likeCountStatus = likeService.getLikeCount(postId);
+        if (!likeCountStatus.isOk()) {
+            System.out.println("Failed to retrieve like count: " + likeCountStatus.getMessage());
+            return;
+        }
         if (status.isOk()) {
-            System.out.println("Post unliked successfully. Like count: " + likeService.getLikeCount(postId));
+            System.out.println("Post unliked successfully. Like count: " + likeCountStatus.getData());
         } else {
             System.out.println("Failed to unlike post: " + status.getMessage());
         }

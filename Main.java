@@ -25,7 +25,7 @@ public class Main {
 
         HashMap<String, String> cookieHashMap = new HashMap<>();
 
-        Profile profile = new Profile(cookieHashMap, userService, postService, followService, authService);
+        Profile profile = new Profile(cookieHashMap, userService, postService, followService, authService, likeService);
         Menu menu = new Menu(cookieHashMap, userService, postService, likeService, profile, authService);
         UserInterface userInterface = new UserInterface(cookieHashMap, authService, menu);
 
@@ -36,7 +36,7 @@ public class Main {
         postRepository.close();
         followRepository.close();
         likeRepository.close();
-        System.out.println("Thank you for using the Social Media Application!");
+        System.out.println("Thank you for using our Social Media Application!");
         System.out.println("Exiting the application...");
         System.exit(0);
     }

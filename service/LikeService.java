@@ -37,7 +37,7 @@ public class LikeService {
             return new ResponseEnity<>(false, false, "You already liked this post");
         }
 
-        Like like = new Like(user.getId(), postId);
+        Like like = new Like( postId,user.getId());
         likeRepository.add(like);
         return new ResponseEnity<>(true, true, "Post liked successfully");
     }

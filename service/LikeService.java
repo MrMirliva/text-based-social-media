@@ -29,7 +29,7 @@ public class LikeService {
      */
     public ResponseEnity<Boolean> likePost(User user, int postId) {
         Optional<Post> post = postRepository.findById(postId);
-        if (post == null) {
+        if (!post.isPresent()) {
             return new ResponseEnity<>(false, false, "Post not found");
         }
 
@@ -66,9 +66,9 @@ public class LikeService {
      * @param postId The ID of the post whose like count is to be retrieved.
      * @return Returns the number of likes for the specified post.
      */
-    public int getLikeCount(int postId) {
-        return likeRepository.countByPostId(postId);
+    public ResponseEnity<Integer> getLikeCount(int postId) {
+        return new ResponseEnity<>(likeRepository.countByPostId(postId), true, "Like count retrieved successfully");
     }
-    
+
 }
 

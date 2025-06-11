@@ -37,33 +37,6 @@ public class Profile {
         this.cookieHashMap = cookiHashMap;
     }
 
-
-   /*  public ArrayList<String> getFallowers() {
-        return fallowers;
-    }
-    public void setFallowers(ArrayList<String> fallowers) {
-        this.fallowers = fallowers;
-    }
-    public ArrayList<String> getPosts() {
-        return posts;
-    }
-    public void setPosts(ArrayList<String> posts) {
-        this.posts = posts;
-    }
-
-    public void seeFallowers() {
-        for (int i = 0; i < fallowers.size(); i++) {
-            System.out.println(fallowers.get(i));
-        }
-    }
-    public void seePosts() {
-        for (int i = 0; i < posts.size(); i++) {
-            System.out.println(posts.get(i));
-        }
-    }
-    public void logOut() {
-        System.out.println("You have been logged out");
-    }*/
     public void profileMenu() {
         // Use a visible method that returns ResponseEntity<User>
         ResponseEnity<User> response = authService.getAuthenticatedUser(cookieHashMap);
@@ -169,35 +142,29 @@ public class Profile {
         public Boolean getLoggedOutBoolean() {
             return loggedOutBoolean;
         }
-public void unfollow(String username) {
-    /*ResponseEnity<User> response = followService.follow(null, 0);
-    User targetUser = userRepository.findByUsername(username);
-    if (targetUser == null) {
-        System.out.println("User not found: " + username);
-        return;
-    }
-
-    ResponseEnity<?> response = fallowService.unfollow(currentUser, targetUser.getId());
+public void unfollow() {
+     System.out.println("Enter userId to unfollow: ");
+     Scanner scanner = new Scanner(System.in);
+     int targetUserId = scanner.nextInt();
+    ResponseEnity<Boolean> response = followService.unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
     if (response.isOk()) {
-        System.out.println("Unfollowed user: " + targetUser.getUsername());
+        System.out.println("Unfollowed user with ID: " + targetUserId);
     } else {
         System.out.println("Failed to unfollow user: " + response.getMessage());
-    }*/
+    }
+     
 }
 
-public void follow(String username) {
-    /*User targetUser = userRepository.findByUsername(username);
-    if (targetUser == null) {
-        System.out.println("User not found: " + username);
-        return;
-    }
-
-    ResponseEnity<Boolean> response = fallowService.follow(currentUser, targetUser.getId());
+public void follow() {
+     System.out.println("Enter userId to follow: ");
+     Scanner scanner = new Scanner(System.in);
+     int targetUserId = scanner.nextInt();
+    ResponseEnity<Boolean> response = followService.follow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
     if (response.isOk()) {
-        System.out.println("Followed user: " + targetUser.getUsername());
+        System.out.println("Followod user with ID: " + targetUserId);
     } else {
         System.out.println("Failed to follow user: " + response.getMessage());
-    }*/
+    }
 }
 
 public void followThings() {
@@ -208,13 +175,11 @@ public void followThings() {
     int choice = scanner.nextInt();
     scanner.nextLine(); // Consume newline
 
-    System.out.println("Enter the username: ");
-    String username = scanner.nextLine();
 
     if (choice == 1) {
-        follow(username);
+        follow();
     } else if (choice == 2) {
-        unfollow(username);}
+        unfollow();}
         else if (choice == 3) {
         System.out.println("Exiting to profile menu.");
         profileMenu();
@@ -224,6 +189,4 @@ public void followThings() {
     }
 }
 
-
-    
 }

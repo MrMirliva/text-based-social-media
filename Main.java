@@ -25,7 +25,7 @@ public class Main {
 
         HashMap<String, String> cookieHashMap = new HashMap<>();
 
-        Profile profile = new Profile(cookieHashMap, userService, postService, followService, authService);
+        Profile profile = new Profile(cookieHashMap, userService, postService, followService, authService, likeService);
         Menu menu = new Menu(cookieHashMap, userService, postService, likeService, profile, authService);
         UserInterface userInterface = new UserInterface(cookieHashMap, authService, menu);
 

@@ -62,6 +62,15 @@ public class FollowService {
         return new ResponseEnity<>(followRepository.findByFollowerId(userId).size(), true, "Follower count retrieved successfully");
 
     }
+    /**
+     * This function retrieves the count of users that a specific user is following.
+     *
+     * @param userId The ID of the user whose following count is to be retrieved.
+     * @return Returns the number of users that the specified user is following.
+     */
+    public ResponseEnity<Integer> getFollowingCount(int userId) {
+        return new ResponseEnity<>(followRepository.findByFollowingId(userId).size(), true, "Following count retrieved successfully");
+    }
 
     
 

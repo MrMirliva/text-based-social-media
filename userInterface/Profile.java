@@ -14,6 +14,7 @@ import service.PostService;
 import service.AuthService;
 import service.UserService;
 import service.FollowService;
+import service.LikeService;
 
 public class Profile {
 
@@ -21,6 +22,7 @@ public class Profile {
     private final PostService postService;
     private final FollowService followService;
     private final AuthService authService;
+    private final LikeService likeService;
     private final HashMap<String,String> cookieHashMap;
     private Boolean loggedOutBoolean = false;
 
@@ -28,12 +30,14 @@ public class Profile {
                     UserService userService, 
                     PostService postService,
                     FollowService followService, 
-                    AuthService authService
+                    AuthService authService,
+                    LikeService likeService
         ) {
         this.userService = userService;
         this.postService = postService;
         this.followService = followService;
         this.authService = authService;
+        this.likeService = likeService;
         this.cookieHashMap = cookiHashMap;
     }
 
@@ -55,10 +59,11 @@ public class Profile {
         System.out.println("1. Change UserName");
         System.out.println("2. Change Password");
         System.out.println("3. See Posts");
-        System.out.println("4. See friends count");
-        System.out.println("5. follow/unfollow");
-        System.out.println("6. Back to main menu");
-        System.out.println("7. Log Out");
+        System.out.println("4. Delete/edit Post");
+        System.out.println("5. See friends count");
+        System.out.println("6. follow/unfollow");
+        System.out.println("7. Back to main menu");
+        System.out.println("8. Log Out");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt(); 
         switch (choice) {
@@ -89,11 +94,17 @@ public class Profile {
                 }
 
                 break;
-            case 4:
+            case 5:
                 profileResponseEntity = userService.viewProfile(authUser);
+                ResponseEnity<Integer> followerCount = followService.getFollowerCount(authUser.getId());
+
+
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
                     System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
+                if (followerCount.isOk()) {
+                    System.out.println("Number of Followers: " + followerCount.getData());
+                }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());
                 }
@@ -104,26 +115,44 @@ public class Profile {
                 profileResponseEntity = userService.viewProfile(authUser);
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
-                    System.out.println("Posts:");
+                    ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+                    ResponseEnity<Integer> likeCount = likeService.getLikeCount(profileResponse.getPosts().get(0).getId());
+
                     for (Post post : profileResponse.getPosts()) {
-                        System.out.println(" - Post ID: " + post.getId() + ", Content: " + post.getContent());
-                        System.out.println("Posted by User ID: " + post.getUserId());
+                        System.out.println("Posted by User ID: " + post.getUserId() + " Username: " + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
+                        System.out.println("Post ID: " + post.getId());
+                        System.out.println("Content: " + post.getContent());
+                        System.out.println("Likes: " + (likeCount.isOk() ? likeCount.getData() : "Error retrieving like count"));
+                        System.out.println();
                         System.out.println("Posted at: " + post.getCreatedAt());
+
                         System.out.println("--------------------------------------------------");
+                    }
+                    if (profileResponse.getPosts().isEmpty()) {
+                        System.out.println("You have no posts yet.");
                     }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());}
                 profileMenu();    
                 break;
-            case 5:
+            case 4:
+                deleteEditPost();
+                profileMenu();
+                break;    
+            case 6:
                 followThings();
                 profileMenu();
-                return; // or menu.showMenu();  
+                break; // or menu.showMenu();  
             case 7:
+                System.out.println("Exiting to main menu.");
+                System.out.println();
+                break; // Exit the profile menu    
+            case 8:
                 logOut();
                 return;
             default:
-                System.out.println("Invalid choice.");
+                System.out.println("Invalid choice. Please try again.");
+                profileMenu();
         }
     }
 
@@ -188,5 +217,46 @@ public void followThings() {
         followThings();
     }
 }
+    public void deleteEditPost() {
+        System.out.println("1. Edit Post");
+        System.out.println("2. Delete Post");
+        System.out.println("3. Back to Profile Menu");
+        Scanner scanner = new Scanner(System.in);
+        int choice = scanner.nextInt();
+        scanner.nextLine(); // Consume newline
+        switch (choice) {
+            case 1:
+                System.out.println("Enter Post ID to edit: ");
+                int postIdToEdit = scanner.nextInt();
+                scanner.nextLine(); // Consume newline
+                System.out.println("Enter new content for the post: ");
+                String newContent = scanner.nextLine();
+                ResponseEnity<Post> editResponse = postService.editPost(authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToEdit, newContent);
+                if (editResponse.isOk()) {
+                    System.out.println("Post edited successfully: " + editResponse.getData().getContent());
+                } else {
+                    System.out.println("Failed to edit post: " + editResponse.getMessage());
+                }
+                break;
+            case 2:
+                System.out.println("Enter Post ID to delete: ");
+                int postIdToDelete = scanner.nextInt();
+                ResponseEnity<Boolean> deleteResponse = postService.deletePost(authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToDelete);
+                if (deleteResponse.isOk()) {
+                    System.out.println("Post deleted successfully.");
+                } else {
+                    System.out.println("Failed to delete post: " + deleteResponse.getMessage());
+                }
+                break;
+            case 3:
+                profileMenu();
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
+                deleteEditPost();
+        }
+    }
+
+    
 
 }

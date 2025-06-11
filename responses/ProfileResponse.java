@@ -1,3 +1,9 @@
+package responses;
+
+import java.util.List;
+
+import models.Post;
+
 /**
  * Represents the response object for a user's profile in the social media application.
  * <p>
@@ -10,12 +16,6 @@
  * @author Mirliva (Abdullah Gündüz)
  * @version 1.0
  */
-package responses;
-
-import java.util.List;
-
-import models.Post;
-
 public class ProfileResponse {
     private int userId;
     private String username;

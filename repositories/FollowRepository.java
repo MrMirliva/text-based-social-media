@@ -1,3 +1,11 @@
+package repositories;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import memento.core.MACRepository;
+import models.Follow;
+
 /**
  * The FollowRepository class provides data access operations for Follow entities.
  * It extends the MACRepository to leverage generic CRUD operations and adds
@@ -19,14 +27,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-package repositories;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import memento.core.MACRepository;
-import models.Follow;
-
 public class FollowRepository extends MACRepository<Follow> {
 
     public FollowRepository() {

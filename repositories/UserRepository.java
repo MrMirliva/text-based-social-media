@@ -1,3 +1,10 @@
+package repositories;
+
+import java.util.Optional;
+
+import memento.core.MACRepository;
+import models.User;
+
 /**
  * UserRepository is a repository class responsible for managing User entities.
  * It extends the generic MACRepository to provide CRUD operations and additional
@@ -13,13 +20,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-package repositories;
-
-import java.util.Optional;
-
-import memento.core.MACRepository;
-import models.User;
-
 public class UserRepository extends MACRepository<User>{
 
     public UserRepository() {

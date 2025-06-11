@@ -1,3 +1,7 @@
+package requests;
+
+import java.util.HashMap;
+
 /**
  * Represents a login request containing user credentials.
  * <p>
@@ -10,10 +14,6 @@
  * @since 2025-06-04
  * @version 1.0
  */
-package requests;
-
-import java.util.HashMap;
-
 public class LoginRequest extends RootRequest {
     private String username;
     private String password;

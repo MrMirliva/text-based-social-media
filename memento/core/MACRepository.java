@@ -1,19 +1,3 @@
-/**
- * MACRepository is an abstract generic repository class for managing persistent storage of models
- * that extend the MACModel class. It provides basic CRUD (Create, Read, Update, Delete) operations,
- * unique constraint enforcement, default value assignment via annotations, and serialization/deserialization
- * logic for saving and loading model data from a text file.
- * <p>
- * The repository uses reflection to handle model fields, supports custom annotations for default values
- * and uniqueness, and ensures that all returned model instances are clones to prevent unintended modifications.
- * <p>
- * Subclasses should implement or extend this class to provide concrete repository logic for specific model types.
- *
- * @param <T> The type of MACModel this repository manages
- * @author Mirliva (Abdullah Gündüz)
- * @version 1.0
- * @since 2025-06-04
- */
 package memento.core;
 
 import java.time.LocalDateTime;
@@ -37,14 +21,28 @@ import memento.anatation.Default;
 import memento.anatation.Encrypted;
 import memento.anatation.Unique;
 
+/**
+ * MACRepository is an abstract generic repository class for managing persistent storage of models
+ * that extend the MACModel class. It provides basic CRUD (Create, Read, Update, Delete) operations,
+ * unique constraint enforcement, default value assignment via annotations, and serialization/deserialization
+ * logic for saving and loading model data from a text file.
+ * <p>
+ * The repository uses reflection to handle model fields, supports custom annotations for default values
+ * and uniqueness, and ensures that all returned model instances are clones to prevent unintended modifications.
+ * <p>
+ * Subclasses should implement or extend this class to provide concrete repository logic for specific model types.
+ *
+ * @param <T> The type of MACModel this repository manages
+ * @author Mirliva (Abdullah Gündüz)
+ * @version 1.0
+ * @since 2025-06-04
+ */
 public abstract class MACRepository<T extends MACModel> {
     
     protected final List<T> items = new ArrayList<>();
     protected final Class<T> modelClass;
     private final String fileName;
     private final String DELIMINATOR = "<-!->";
-
-    ///REFACTOR ///TODO: Bir Map ile varibleName -> Field eşlemesi yaparak Column anatation'unu kullandırtabilirim. Bunu updateColumns methodu yazarak yapabilirim.
 
     private int currentId = 0;
 
@@ -271,7 +269,6 @@ public abstract class MACRepository<T extends MACModel> {
         return (int) items.stream().filter(item -> item != null).count();
     }
 
-    ///REFACTOR: Column annotation is not used in this method, consider removing it or using it properly.
     /**
      * Loads data from the associated file into the repository.
      * <p>
@@ -390,7 +387,6 @@ public abstract class MACRepository<T extends MACModel> {
         }
     }
     
-    ///REFACTOR: Column annotation is not used in this method, consider removing it or using it properly.
     /**
      * The `close()` method writes data from a list of items to a file, encrypting certain fields if
      * they are annotated with `Encrypted`.

@@ -1,3 +1,9 @@
+package memento.core;
+
+import java.time.LocalDateTime;
+
+import memento.anatation.Unique;
+
 /**
  * The {@code MACModel} class serves as an abstract base model for entities that require
  * a unique identifier and timestamp tracking for creation and updates.
@@ -23,12 +29,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-package memento.core;
-
-import java.time.LocalDateTime;
-
-import memento.anatation.Unique;
-
 public abstract class MACModel implements Cloneable, Comparable<MACModel> {
     @Unique
     protected int id;

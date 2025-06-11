@@ -1,3 +1,11 @@
+package repositories;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import memento.core.MACRepository;
+import models.Post;
+
 /**
  * PostRepository is a repository class responsible for managing Post entities.
  * It extends the generic MACRepository to provide CRUD operations for Post objects.
@@ -11,14 +19,6 @@
  * @version 1.1
  * @since 2025-06-04
  */
-package repositories;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
-import memento.core.MACRepository;
-import models.Post;
-
 public class PostRepository extends MACRepository<Post> {
 
     public PostRepository() {

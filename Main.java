@@ -6,7 +6,20 @@ import userInterface.*;
 
 public class Main {
 
-    ///DOC
+    /**
+     * This code is the entry point of a text-based social media application.
+     *  It initializes the core components of the application's architecture,
+     *  including repositories for users, posts, follows, and likes,
+     *  as well as the corresponding service layers that encapsulate business logic.
+     * The code then sets up the user interface components,
+     *  linking them together with shared state 
+     *  (such as the cookie map for session management).
+     * After displaying initialization messages,
+     *  it starts the main user interface loop. 
+     * Once the application finishes running,
+     *  it gracefully closes all repository resources 
+     *  and prints exit messages before terminating the program.
+     */
     public static void main(String[] args) {
 
         System.out.println("Welcome to the Social Media Application!");

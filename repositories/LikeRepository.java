@@ -1,3 +1,10 @@
+package repositories;
+
+import java.util.List;
+
+import memento.core.MACRepository;
+import models.Like;
+
 /**
  * LikeRepository is a repository class responsible for managing data access operations for Like entities.
  * It extends MACRepository<Like> and provides methods specific to like operations.
@@ -15,14 +22,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-
-package repositories;
-
-import java.util.List;
-
-import memento.core.MACRepository;
-import models.Like;
-
 public class LikeRepository extends MACRepository<Like> {
 
     public LikeRepository() {

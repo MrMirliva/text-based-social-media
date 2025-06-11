@@ -1,3 +1,7 @@
+package requests;
+
+import java.util.HashMap;
+
 /**
  * RootRequest is an abstract base class representing a generic request that contains cookie information.
  * It provides methods to get and set cookies, which are stored as key-value pairs in a HashMap.
@@ -7,10 +11,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-package requests;
-
-import java.util.HashMap;
-
 public abstract class RootRequest {
     private HashMap<String, String> cookie;
 

@@ -33,7 +33,7 @@ public class LikeService {
             return new ResponseEnity<>(false, false, "Post not found");
         }
 
-        if (likeRepository.exists(user.getId(), postId)) {
+        if (likeRepository.exists( postId,user.getId())) {
             return new ResponseEnity<>(false, false, "You already liked this post");
         }
 
@@ -51,7 +51,7 @@ public class LikeService {
      * @return Returns a ResponseEnity indicating success or failure of the unlike operation.
      */
     public ResponseEnity<Boolean> unlikePost(User user, int postId) {
-        if (!likeRepository.exists(user.getId(), postId)) {
+        if (!likeRepository.exists(postId,user.getId())) {
             return new ResponseEnity<>(false, false, "You have not liked this post");
         }
 

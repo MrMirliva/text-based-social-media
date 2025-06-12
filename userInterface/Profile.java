@@ -116,9 +116,10 @@ public class Profile {
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
                     ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
-                    ResponseEnity<Integer> likeCount = likeService.getLikeCount(profileResponse.getPosts().get(0).getId());
+                    
 
                     for (Post post : profileResponse.getPosts()) {
+                        ResponseEnity<Integer> likeCount = likeService.getLikeCount(post.getId());
                         System.out.println("Posted by User ID: " + post.getUserId() + " Username: " + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
                         System.out.println("Post ID: " + post.getId());
                         System.out.println("Content: " + post.getContent());

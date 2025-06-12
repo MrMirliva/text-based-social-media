@@ -1,3 +1,6 @@
+package memento.core;
+
+import java.util.Base64;
 /**
  * Utility class providing simple encryption and decryption methods using Base64 encoding.
  * <p>
@@ -12,11 +15,6 @@
  * @version 1.0
  * @since 2025-06-04
  */
-
-package memento.core;
-
-import java.util.Base64;
-
 final class CryptoUtil {
     /**
      * Encrypts the given input string by encoding it using Base64 encoding.

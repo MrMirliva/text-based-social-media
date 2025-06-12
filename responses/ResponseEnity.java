@@ -1,3 +1,5 @@
+package responses;
+
 /**
  * Generic response entity class for wrapping API responses.
  *
@@ -19,9 +21,6 @@
  * @version 2.0
  * @since 2024-08-01 (original); revised 2025-06-04
  */
-
-package responses;
-
 public class ResponseEnity<T> {
     private T data;
     private boolean isOk;

@@ -25,82 +25,108 @@ public class UserInterface {
 
 
 
-    public void login() {
-        //boolean loggedIn = false;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your username: ");
-        String username = scanner.nextLine();
-        System.out.println("Enter your password: ");
-        String password = scanner.nextLine();
+public void showMenu() {
+    System.out.println("1. Login");
+    System.out.println("2. Register");
+    System.out.println("3. Exit");
+    Scanner scanner = new Scanner(System.in);
+    int choice;
 
-        LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
-
-
-         ResponseEnity<User> status = authService.login( loginRequest);
-
-         if(status.isOk())
-          menu.showMenu();
-          else{
-          System.out.println("login failed: " + status.getMessage());
-          showMenu();
-        }
-
-        //return loggedIn;
-    }
-    public void register() {
-        //cookieHashMap = new HashMap<>();
-       // boolean registered = false;
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Enter your full name: ");
-        String fullName = scanner.nextLine();
-        System.out.println("Enter your username: ");
-        String username = scanner.nextLine();
-        System.out.println("Enter your password: ");
-        String password = scanner.nextLine();
-
-        LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
-
-        ResponseEnity<User> status = authService.register(fullName, loginRequest);
-
-        if(status.isOk()) {
-            System.out.println("Registration successful!");
-
-            //registered = true;
-        } else {
-            System.out.println("Registration failed: " + status.getMessage());
-        }
-        showMenu();
-        //menu = new Menu(new Profile(username, password));
-        //return registered;
-    }
-
-    public void showMenu() {
-        System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Exit");
-        Scanner scanner = new Scanner(System.in);
-        int choice;
-        if(!menu.isWillExit())
-            choice = 3; // If the user is logged out, default to exit
-        else {
+    if (!menu.isWillExit())
+        choice = 3; // If the user is logged out, default to exit
+    else {
+        while (true) {
             System.out.print("Enter your choice: ");
-            choice = scanner.nextInt();
-        }
-        
-        switch (choice) {
-            case 1:
-                login();
-                break;
-            case 2:                
-                register();
-                break;
-            case 3:
-                return; // Exit the application
-            default:
-                System.out.println("Invalid choice.");
-                showMenu();
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 3) {
+                    System.out.println("Invalid choice. Please enter 1, 2 or 3.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-3).");
+            }
         }
     }
+
+    switch (choice) {
+        case 1:
+            login();
+            break;
+        case 2:
+            register();
+            break;
+        case 3:
+            return; // Exit the application
+    }
+}
+
+public void login() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Enter your username: ");
+    String username = scanner.nextLine().trim();
+    while (username.isEmpty()) {
+        System.out.println("Username cannot be empty. Please enter your username: ");
+        username = scanner.nextLine().trim();
+    }
+
+    System.out.println("Enter your password: ");
+    String password = scanner.nextLine().trim();
+    while (password.isEmpty()) {
+        System.out.println("Password cannot be empty. Please enter your password: ");
+        password = scanner.nextLine().trim();
+    }
+
+    LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
+
+    ResponseEnity<User> status = authService.login(loginRequest);
+
+    if (status.isOk())
+        menu.showMenu();
+    else {
+        System.out.println("Login failed: " + status.getMessage());
+        showMenu();
+    }
+}
+
+public void register() {
+    Scanner scanner = new Scanner(System.in);
+    System.out.println("Enter your full name: ");
+    String fullName = scanner.nextLine().trim();
+    while (fullName.isEmpty()) {
+        System.out.println("Full name cannot be empty. Please enter your full name: ");
+        fullName = scanner.nextLine().trim();
+    }
+
+    System.out.println("Enter your username: ");
+    String username = scanner.nextLine().trim();
+    while (username.isEmpty()) {
+        System.out.println("Username cannot be empty. Please enter your username: ");
+        username = scanner.nextLine().trim();
+    }
+
+    System.out.println("Enter your password: ");
+    String password = scanner.nextLine().trim();
+    while (password.isEmpty()) {
+        System.out.println("Password cannot be empty. Please enter your password: ");
+        password = scanner.nextLine().trim();
+    }
+
+    LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
+
+    ResponseEnity<User> status = authService.register(fullName, loginRequest);
+
+    if (status.isOk()) {
+        System.out.println("Registration successful!");
+    } else {
+        System.out.println("Registration failed: " + status.getMessage());
+    }
+
+    showMenu();
+}
+
     public void run() {
         System.out.println("Welcome to the User Interface!");
         showMenu();

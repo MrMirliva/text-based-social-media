@@ -106,8 +106,8 @@ public class Menu {
                 postUser.put("userId", String.valueOf(post.getUserId()));
                 ResponseEntity<User> user = authService.getAuthenticatedUser(postUser);
                 ResponseEntity<Integer> likeCount = likeService.getLikeCount(post.getId());
-
-                System.out.println("Posted by User ID: " + post.getUserId() + " Username: "
+                System.out.println();
+                System.out.println("Full name: " + user.getData().getFullName() + " User ID: " + post.getUserId() + " Username: "
                         + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
                 System.out.println("Post ID: " + post.getId());
                 System.out.println("Content: " + post.getContent());

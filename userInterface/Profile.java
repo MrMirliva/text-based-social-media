@@ -195,6 +195,7 @@ public class Profile {
                 ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
                 if (user.isError()) {
                     System.out.println("User not found. Please enter a valid user ID.");
+                    break;
                 } else {
                     ResponseEntity<Boolean> response = followService
                             .unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
@@ -207,6 +208,7 @@ public class Profile {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number (1-8).");
+                break; // geçersiz seçim, çık döngüden
             }
         }
 
@@ -226,6 +228,7 @@ public class Profile {
                 ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
                 if (user.isError()) {
                     System.out.println("User not found. Please enter a valid user ID.");
+                    break;
 
                 } else {
                     ResponseEntity<Boolean> response = followService
@@ -239,6 +242,7 @@ public class Profile {
                 }
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a number (1-8).");
+                break;
             }
         }
 
@@ -267,8 +271,10 @@ public class Profile {
 
         if (choice == 1) {
             follow();
+            followThings();
         } else if (choice == 2) {
             unfollow();
+            followThings();
         } else if (choice == 3) {
             System.out.println("Exiting to profile menu.");
             profileMenu();

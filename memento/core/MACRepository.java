@@ -49,7 +49,6 @@ public abstract class MACRepository<T extends MACModel> {
     public MACRepository(Class<T> modelClass) {
         this.modelClass = modelClass;
         this.fileName = "database\\" + modelClass.getSimpleName() + ".txt";
-        ///TOTO: updateColumns() yazılarak Column anatation'unu kullanabilirim.
         load();
     }
 

@@ -227,7 +227,7 @@ public class Profile {
                 ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
                 if (user.isError()) {
                     System.out.println("User not found. Please enter a valid user ID.");
-                    continue; // geçerli kullanıcı bulunamadı, döngüye devam et
+
                 } else {
                     ResponseEntity<Boolean> response = followService
                             .follow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
@@ -257,15 +257,14 @@ public class Profile {
             try {
                 choice = Integer.parseInt(input);
                 if (choice < 1 || choice > 3) {
-                    System.out.println("Invalid choice. Please enter 1, 2, or 3.");
+                    System.out.println("Invalid choice");
                 } else {
                     break; // geçerli seçim, çık döngüden
                 }
             } catch (NumberFormatException e) {
-                System.out.println("Invalid input. Please enter a number (1-3).");
+                System.out.println("Invalid input");
             }
         }
-        scanner.nextLine(); // Consume newline
 
         if (choice == 1) {
             follow();

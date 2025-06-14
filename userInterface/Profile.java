@@ -195,7 +195,6 @@ public class Profile {
                 ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
                 if (user.isError()) {
                     System.out.println("User not found. Please enter a valid user ID.");
-                    continue; // geçerli kullanıcı bulunamadı, döngüye devam et
                 } else {
                     ResponseEntity<Boolean> response = followService
                             .unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);

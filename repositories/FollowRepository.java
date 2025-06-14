@@ -110,7 +110,7 @@ public class FollowRepository extends MACRepository<Follow> {
      */
     public int numOfFollowers(int followersId) {
         return (int) getAll().stream()
-                .filter(follow -> follow.getFollowingId() == followersId)
+                .filter(follow -> follow.getFollowerId() == followersId)
                 .count();
     }
 
@@ -124,7 +124,7 @@ public class FollowRepository extends MACRepository<Follow> {
      */
     public int numOfFollowing(int followingId) {
         return (int) getAll().stream()
-                .filter(follow -> follow.getFollowerId() == followingId)
+                .filter(follow -> follow.getFollowingId() == followingId)
                 .count();
     }
 }

@@ -21,20 +21,20 @@ package responses;
  * @version 2.0
  * @since 2024-08-01 (original); revised 2025-06-04
  */
-public class ResponseEnity<T> {
+public class ResponseEntity<T> {
     private T data;
     private boolean isOk;
     private String message;
 
-    public ResponseEnity(T data, boolean isOk, String message) {
+    public ResponseEntity(T data, boolean isOk, String message) {
         this.data = data;
         this.isOk = isOk;
         this.message = message;
     }
-    public ResponseEnity() {
+    public ResponseEntity() {
         // Default constructor for serialization/deserialization
     }
-    public ResponseEnity(T data) {
+    public ResponseEntity(T data) {
         this.data = data;
         this.isOk = true;
         this.message = "Success";

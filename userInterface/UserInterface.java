@@ -4,9 +4,8 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import models.User;
-import repositories.UserRepository;
 import requests.LoginRequest;
-import responses.ResponseEnity;
+import responses.ResponseEntity;
 import service.AuthService;
 
 public class UserInterface {
@@ -87,7 +86,7 @@ public class UserInterface {
 
         LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
 
-        ResponseEnity<User> status = authService.login(loginRequest);
+        ResponseEntity<User> status = authService.login(loginRequest);
 
         if (status.isOk())
             menu.showMenu();
@@ -122,7 +121,7 @@ public class UserInterface {
 
         LoginRequest loginRequest = new LoginRequest(username, password, cookieHashMap);
 
-        ResponseEnity<User> status = authService.register(fullName, loginRequest);
+        ResponseEntity<User> status = authService.register(fullName, loginRequest);
 
         if (status.isOk()) {
             System.out.println("Registration successful!");

@@ -1,16 +1,13 @@
 package userInterface;
 
-import java.lang.reflect.Array;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
 import java.util.Scanner;
 
 import models.Post;
 import models.User;
 import responses.ProfileResponse;
-import responses.ResponseEnity;
+import responses.ResponseEntity;
 import service.PostService;
 import service.UserService;
 import service.AuthService;
@@ -61,7 +58,7 @@ public class Menu {
                     System.out.println("Invalid input. Please enter a number (1-4).");
                 }
             }
-            ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+            ResponseEntity<User> user = authService.getAuthenticatedUser(cookieHashMap);
 
             switch (choice) {
                 case 1:
@@ -73,7 +70,7 @@ public class Menu {
                     Scanner scannerP = new Scanner(System.in);
                     String post = scannerP.nextLine();
 
-                    ResponseEnity<Post> status = postService.createPost(user.getData(), post);
+                    ResponseEntity<Post> status = postService.createPost(user.getData(), post);
                     if (status.isOk()) {
                         System.out.println("Post created successfully: " + status.getData().getContent());
                     } else
@@ -101,15 +98,15 @@ public class Menu {
 
     public void timeLine() {
         postService.getLimitedPosts();
-        ResponseEnity<List<Post>> status = postService.getLimitedPosts();
+        ResponseEntity<List<Post>> status = postService.getLimitedPosts();
 
         if (status.isOk()) {
             List<Post> posts = status.getData();
             for (Post post : posts) {
                 HashMap<String, String> postUser = new HashMap<>();
                 postUser.put("userId", String.valueOf(post.getUserId()));
-                ResponseEnity<User> user = authService.getAuthenticatedUser(postUser);
-                ResponseEnity<Integer> likeCount = likeService.getLikeCount(post.getId());
+                ResponseEntity<User> user = authService.getAuthenticatedUser(postUser);
+                ResponseEntity<Integer> likeCount = likeService.getLikeCount(post.getId());
 
                 System.out.println("Posted by User ID: " + post.getUserId() + " Username: "
                         + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
@@ -128,7 +125,7 @@ public class Menu {
     }
 
     public void seeProfile(User user) {
-        ResponseEnity<ProfileResponse> response = userService.viewProfile(user);
+        ResponseEntity<ProfileResponse> response = userService.viewProfile(user);
         if (response.isOk()) {
             ProfileResponse profileResponse = response.getData();
             System.out.println("User ID: " + profileResponse.getUserId());
@@ -165,7 +162,7 @@ public class Menu {
                 System.out.println("Invalid input. Please enter a number (1-4).");
             }
         }
-        ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+        ResponseEntity<User> user = authService.getAuthenticatedUser(cookieHashMap);
         switch (choice) {
             case 1:
                 timeLine();
@@ -179,7 +176,7 @@ public class Menu {
                 System.out.println("Enter User ID to see their posts: ");
                 Scanner scannerP = new Scanner(System.in);
                 int userId = scannerP.nextInt();
-                ResponseEnity<List<Post>> status = postService.getPostsByUserId(userId);
+                ResponseEntity<List<Post>> status = postService.getPostsByUserId(userId);
                 if (status.isOk()) {
                     List<Post> posts = status.getData();
                     if (posts.isEmpty()) {
@@ -188,8 +185,8 @@ public class Menu {
                         for (Post post : posts) {
                             HashMap<String, String> postUser = new HashMap<>();
                             postUser.put("userId", String.valueOf(post.getUserId()));
-                            ResponseEnity<User> postUserResponse = authService.getAuthenticatedUser(postUser);
-                            ResponseEnity<Integer> likeCount = likeService.getLikeCount(post.getId());
+                            ResponseEntity<User> postUserResponse = authService.getAuthenticatedUser(postUser);
+                            ResponseEntity<Integer> likeCount = likeService.getLikeCount(post.getId());
 
                             System.out.println("Posted by User ID: " + post.getUserId() + " Username: "
                                     + (postUserResponse.isOk() ? postUserResponse.getData().getUsername()
@@ -221,8 +218,8 @@ public class Menu {
         System.out.println("Enter Post ID to like: ");
         Scanner scanner = new Scanner(System.in);
         int postId = scanner.nextInt();
-        ResponseEnity<Boolean> status = likeService.likePost(user, postId);
-        ResponseEnity<Integer> likeCountStatus = likeService.getLikeCount(postId);
+        ResponseEntity<Boolean> status = likeService.likePost(user, postId);
+        ResponseEntity<Integer> likeCountStatus = likeService.getLikeCount(postId);
         if (!likeCountStatus.isOk()) {
             System.out.println("Failed to retrieve like count: " + likeCountStatus.getMessage());
             return;
@@ -238,8 +235,8 @@ public class Menu {
         System.out.println("Enter Post ID to unlike: ");
         Scanner scanner = new Scanner(System.in);
         int postId = scanner.nextInt();
-        ResponseEnity<Boolean> status = likeService.unlikePost(user, postId);
-        ResponseEnity<Integer> likeCountStatus = likeService.getLikeCount(postId);
+        ResponseEntity<Boolean> status = likeService.unlikePost(user, postId);
+        ResponseEntity<Integer> likeCountStatus = likeService.getLikeCount(postId);
         if (!likeCountStatus.isOk()) {
             System.out.println("Failed to retrieve like count: " + likeCountStatus.getMessage());
             return;

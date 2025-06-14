@@ -1,17 +1,13 @@
 package userInterface;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
 
-import javax.lang.model.util.ElementScanner14;
-import javax.swing.plaf.basic.BasicScrollPaneUI.ViewportChangeHandler;
-
 import models.Post;
 import models.User;
 import responses.ProfileResponse;
-import responses.ResponseEnity;
+import responses.ResponseEntity;
 import service.PostService;
 import service.AuthService;
 import service.UserService;
@@ -44,18 +40,17 @@ public class Profile {
 
     public void profileMenu() {
         // Use a visible method that returns ResponseEntity<User>
-        ResponseEnity<User> response = authService.getAuthenticatedUser(cookieHashMap);
+        ResponseEntity<User> response = authService.getAuthenticatedUser(cookieHashMap);
         User authUser = null;
         if (response.isOk()) {
             authUser = response.getData();
 
         } else {
-            // TODO: Handle the case where the user is not authenticated
             System.out.println("You are not authenticated.");
             return;
         }
-        ResponseEnity<ProfileResponse> profileResponseEntity;
-        ResponseEnity<User> profileSettings;
+        ResponseEntity<ProfileResponse> profileResponseEntity;
+        ResponseEntity<User> profileSettings;
 
         System.out.println("1. Change UserName");
         System.out.println("2. Change Password");
@@ -111,7 +106,7 @@ public class Profile {
                 break;
             case 5:
                 profileResponseEntity = userService.viewProfile(authUser);
-                ResponseEnity<Integer> followingCount = followService.getFollowingCount(authUser.getId());
+                ResponseEntity<Integer> followingCount = followService.getFollowingCount(authUser.getId());
 
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
@@ -128,10 +123,10 @@ public class Profile {
                 profileResponseEntity = userService.viewProfile(authUser);
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
-                    ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+                    ResponseEntity<User> user = authService.getAuthenticatedUser(cookieHashMap);
 
                     for (Post post : profileResponse.getPosts()) {
-                        ResponseEnity<Integer> likeCount = likeService.getLikeCount(post.getId());
+                        ResponseEntity<Integer> likeCount = likeService.getLikeCount(post.getId());
                         System.out.println("Posted by User ID: " + post.getUserId() + " Username: "
                                 + (user.isOk() ? user.getData().getUsername() : "Unknown User"));
                         System.out.println("Post ID: " + post.getId());
@@ -173,7 +168,7 @@ public class Profile {
     }
 
     public void logOut() {
-        ResponseEnity<?> response = authService.logout(cookieHashMap);
+        ResponseEntity<?> response = authService.logout(cookieHashMap);
         if (response.isOk()) {
             System.out.println("You have been logged out successfully.");
         } else {
@@ -190,7 +185,7 @@ public class Profile {
         System.out.println("Enter userId to unfollow: ");
         Scanner scanner = new Scanner(System.in);
         int targetUserId = scanner.nextInt();
-        ResponseEnity<Boolean> response = followService
+        ResponseEntity<Boolean> response = followService
                 .unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
         if (response.isOk()) {
             System.out.println("Unfollowed user with ID: " + targetUserId);
@@ -204,7 +199,7 @@ public class Profile {
         System.out.println("Enter userId to follow: ");
         Scanner scanner = new Scanner(System.in);
         int targetUserId = scanner.nextInt();
-        ResponseEnity<Boolean> response = followService
+        ResponseEntity<Boolean> response = followService
                 .follow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
         if (response.isOk()) {
             System.out.println("Followod user with ID: " + targetUserId);
@@ -249,7 +244,7 @@ public class Profile {
     }
 
     public void deleteEditPost() {
-        ResponseEnity<List<Post>> postsResponse = postService
+        ResponseEntity<List<Post>> postsResponse = postService
                 .getPostsByUserId(authService.getAuthenticatedUser(cookieHashMap).getData().getId());
         System.out.println("1. Edit Post");
         System.out.println("2. Delete Post");
@@ -282,7 +277,7 @@ public class Profile {
                 } else {
                     System.out.println("Enter new content for the post: ");
                     String newContent = scanner.nextLine();
-                    ResponseEnity<Post> editResponse = postService.editPost(
+                    ResponseEntity<Post> editResponse = postService.editPost(
                             authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToEdit, newContent);
                     if (editResponse.isOk()) {
                         System.out.println("Post edited successfully: " + editResponse.getData().getContent());
@@ -299,7 +294,7 @@ public class Profile {
                     System.out.println("Post not found.");
                     break;
                 } else {
-                    ResponseEnity<Boolean> deleteResponse = postService
+                    ResponseEntity<Boolean> deleteResponse = postService
                             .deletePost(authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToDelete);
                     if (deleteResponse.isOk()) {
                         System.out.println("Post deleted successfully.");

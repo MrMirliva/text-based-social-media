@@ -31,7 +31,6 @@ import java.util.List;
 
 public class RandomNumberGenerator {
     
-    //TO_VERIFY
     /**
      * @param min the minimum value (inclusive)
      * @param max the maximum value (inclusive)

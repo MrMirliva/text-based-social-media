@@ -9,6 +9,28 @@ import repositories.PostRepository;
 import responses.ResponseEntity;
 import helper.RandomNumberGenerator;
 
+/**
+ * PostService is a service class responsible for managing post-related operations
+ * in a text-based social media application. It provides methods for creating, editing,
+ * deleting, and retrieving posts, as well as fetching a limited number of random posts.
+ * The service interacts with the PostRepository to persist and query post data.
+ * <p>
+ * Key features include:
+ * <ul>
+ *   <li>Creating new posts with validation to prevent use of reserved delimiters</li>
+ *   <li>Editing and deleting posts with ownership checks to ensure only the post owner can modify or remove their posts</li>
+ *   <li>Retrieving all posts made by a specific user</li>
+ *   <li>Fetching up to 30 random posts for display or discovery features</li>
+ *   <li>Returning informative response messages and status for each operation</li>
+ * </ul>
+ * <p>
+ * This class is intended to be used as a core component in applications that require
+ * social networking features, such as posting, editing, deleting, and browsing posts.
+ *
+ * @author Muhammed Yasin Eroğlu
+ * @version 1.0
+ * @since 2025-06-14
+ */
 public class PostService {
     private final PostRepository postRepository;
     private final String DELIMINATOR = "<-!->";

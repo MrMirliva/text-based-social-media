@@ -11,6 +11,28 @@ import models.User;
 import responses.ProfileResponse;
 import responses.ResponseEntity;
 
+/**
+ * UserService is a service class responsible for managing user-related operations
+ * in a text-based social media application. It provides methods for viewing user profiles,
+ * updating usernames, and updating passwords. The service interacts with UserRepository,
+ * FollowRepository, and PostRepository to retrieve and persist user data, follower counts,
+ * and user posts.
+ * <p>
+ * Key features include:
+ * <ul>
+ *   <li>Viewing a user's profile, including their follower count and posts</li>
+ *   <li>Updating a user's username with validation to prevent duplicates, spaces, and reserved delimiters</li>
+ *   <li>Updating a user's password with validation for minimum length, spaces, and reserved delimiters</li>
+ *   <li>Returning informative response messages and status for each operation</li>
+ * </ul>
+ * <p>
+ * This class is intended to be used as a core component in applications that require
+ * user management features, such as profile viewing and credential updates.
+ *
+ * @author Muhammed Yasin Eroğlu
+ * @version 1.0
+ * @since 2025-06-14
+ */
 public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
@@ -64,6 +86,10 @@ public class UserService {
             return new ResponseEntity<>(null, false, "Username already exists");
         }
 
+        if(newUsername.contains(" ")) {
+            return new ResponseEntity<>(null, false, "Username cannot contain spaces");
+        }
+
         user.setUsername(newUsername);
         userRepository.update(user);
         return new ResponseEntity<>(user, true, "Username updated successfully");
@@ -84,6 +110,9 @@ public class UserService {
 
         if(newPassword.contains(DELIMINATOR)) {
             return new ResponseEntity<>(null, false, "Password cannot contain the delimiter: " + DELIMINATOR);
+        }
+        if(newPassword.contains(" ")) {
+            return new ResponseEntity<>(null, false, "Password cannot contain spaces");
         }
 
         user.setPassword(newPassword);

@@ -32,8 +32,8 @@ public void showMenu() {
     Scanner scanner = new Scanner(System.in);
     int choice;
 
-    if (!menu.isWillExit())
-        choice = 3; // If the user is logged out, default to exit
+    if (menu.isSystemExit())
+        choice = 3; 
     else {
         while (true) {
             System.out.print("Enter your choice: ");
@@ -58,8 +58,12 @@ public void showMenu() {
         case 2:
             register();
             break;
-        case 3:
-            return; // Exit the application
+        case 3:                 
+            break; // Exit the application
+    }
+        if (menu.isWillExit()) {
+        choice = 4; // If the user is already logged in, default to login
+        showMenu();
     }
 }
 

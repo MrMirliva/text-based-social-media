@@ -24,7 +24,8 @@ public class Menu {
     private final LikeService likeService;
     private final HashMap<String,String> cookieHashMap;
     private final AuthService authService;
-    private boolean willExit = true;
+    private boolean willExit = false;
+    private boolean systemExit =false;
 
     public Menu(HashMap<String,String> cookieHashMap,UserService userService, PostService postService, LikeService likeService, Profile profile, AuthService authService) {
         this.cookieHashMap = cookieHashMap;
@@ -36,14 +37,18 @@ public class Menu {
     }
 
     public void showMenu() {
+        systemExit =false;
         willExit = profile.getLoggedOutBoolean();
+
         if(!willExit){
         System.out.println("1. See Profile");
         System.out.println("2. Create Post");
         System.out.println("3. Post Things");
+        System.out.println("4. exit System");
         Scanner scanner = new Scanner(System.in);
         int choice = scanner.nextInt();
         ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
+
         switch (choice) {
             case 1:
                 seeProfile(user.getData());
@@ -69,14 +74,16 @@ public class Menu {
                 postThings();
                 showMenu();
                 break;
-            case 5:
-                //refreshTimeLine();
+            case 4:
+                systemExit = true;
                 break;
             default:
                 System.out.println("Invalid choice.");
                 showMenu();
         }
-        }else{
+        } else {
+            System.out.println("You are logged out. Please login again.");
+            
             return;
         }
     }
@@ -230,6 +237,10 @@ public class Menu {
                 System.out.println("Invalid choice.");
                 likeThings(user);
         }
+    }
+
+    public boolean isSystemExit() {
+        return systemExit;
     }
 
     public boolean isWillExit() {

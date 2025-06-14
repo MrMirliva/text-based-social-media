@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Scanner;
 
 import javax.lang.model.util.ElementScanner14;
+import javax.swing.plaf.basic.BasicScrollPaneUI.ViewportChangeHandler;
 
 import models.Post;
 import models.User;
@@ -157,7 +158,7 @@ public class Profile {
         }
     }
 
-        public boolean logOut() {
+    public void logOut() {
         ResponseEnity<?> response = authService.logout(cookieHashMap);
         if (response.isOk()) {
             System.out.println("You have been logged out successfully.");
@@ -165,7 +166,6 @@ public class Profile {
             System.out.println("Failed to log out: " + response.getMessage());
         }
         loggedOutBoolean = true;
-        return false;
     }
 
 

@@ -60,7 +60,7 @@ public class UserInterface {
             case 3:
                 return; // Exit the application
         }
-        if (menu.isWillExit()) {
+        if (menu.isWillExit() && !!menu.isWillExit()) {
             choice = 4; // If the user is already logged in, default to login
             
             showMenu();

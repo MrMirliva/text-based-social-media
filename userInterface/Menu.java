@@ -34,7 +34,6 @@ public class Menu {
     }
 
     public void showMenu() {
-        systemExit = false;
         willExit = profile.getLoggedOutBoolean();
 
         if (!willExit) {
@@ -85,7 +84,7 @@ public class Menu {
                     break;
                 case 4:
                     systemExit = true;
-                    break;
+                    return;
                 default:
                     System.out.println("Invalid choice.");
                     showMenu();
@@ -206,7 +205,6 @@ public class Menu {
                 }
                 break;
             case 4:
-                showMenu();
                 break;
             default:
                 System.out.println("Invalid choice.");

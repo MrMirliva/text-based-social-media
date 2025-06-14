@@ -110,9 +110,9 @@ public class Profile {
 
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
-                    System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
+                    System.out.println("Number of Followers: " + followingCount.getData());
                     if (followingCount.isOk()) {
-                        System.out.println("Number of Following: " + followingCount.getData());
+                        System.out.println("Number of Following: "+ profileResponse.getNumOfFollowers() );
                     }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());

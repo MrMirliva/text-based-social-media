@@ -15,6 +15,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final FollowRepository followRepository;
     private final PostRepository postRepository;
+    private final String DELIMINATOR = "<-!->";
 
     public UserService(UserRepository userRepository, FollowRepository followRepository, PostRepository postRepository) {
         this.followRepository = followRepository;
@@ -55,6 +56,10 @@ public class UserService {
             return new ResponseEntity<>(null, false, "Username cannot be empty");
         }
 
+        if(newUsername.contains(DELIMINATOR)) {
+            return new ResponseEntity<>(null, false, "Username cannot contain the delimiter: " + DELIMINATOR);
+        }
+
         if (userRepository.findByUsername(newUsername).isPresent()) {
             return new ResponseEntity<>(null, false, "Username already exists");
         }
@@ -75,6 +80,10 @@ public class UserService {
     public ResponseEntity<User> updatePassword(User user, String newPassword) {
         if (newPassword == null || newPassword.length() < 4) {
             return new ResponseEntity<>(null, false, "Password must be at least 4 characters");
+        }
+
+        if(newPassword.contains(DELIMINATOR)) {
+            return new ResponseEntity<>(null, false, "Password cannot contain the delimiter: " + DELIMINATOR);
         }
 
         user.setPassword(newPassword);

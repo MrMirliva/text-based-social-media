@@ -460,45 +460,6 @@ public abstract class MACRepository<T extends MACModel> {
         return currentId;   
     }
 
-    public HeaderType convertHeaderType(String a) {
-        switch (a) {
-            case "int":
-                return HeaderType.INT;
-            case "String":
-                return HeaderType.STRING;
-            case "boolean":
-                return HeaderType.BOOLEAN;
-            case "double":
-                return HeaderType.DOUBLE;
-            case "float":
-                return HeaderType.FLOAT;
-            case "long":
-                return HeaderType.LONG;
-            case "short":
-                return HeaderType.SHORT;
-            case "byte":
-                return HeaderType.BYTE;
-            case "char":
-                return HeaderType.CHAR;
-            case "LocalDateTime":
-                return HeaderType.LOCALDATETIME;
-            default:
-                throw new IllegalArgumentException("Unknown type: " + a);
-        }
-    }
-
-    enum HeaderType {
-        INT,
-        STRING,
-        BOOLEAN,
-        DOUBLE,
-        FLOAT,
-        LONG,
-        SHORT,
-        BYTE,
-        CHAR,
-        LOCALDATETIME
-    }
 
     private List<Field> getAllFields(Class<?> clazz) {
         List<Field> fields = new ArrayList<>();

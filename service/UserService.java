@@ -57,7 +57,7 @@ public class UserService {
             return new ResponseEnity<>(null, false, "Username cannot be empty");
         }
 
-        if (userRepository.findByUsername(newUsername) != null) {
+        if (userRepository.findByUsername(newUsername).isPresent()) {
             return new ResponseEnity<>(null, false, "Username already exists");
         }
 

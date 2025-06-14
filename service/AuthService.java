@@ -68,11 +68,18 @@ public class AuthService {
         if(loginRequest.getUsername().contains(DELIMINATOR)) {
             return new ResponseEntity<>(null, false, "Username cannot contain the delimiter: " + DELIMINATOR);
         }
+        if(loginRequest.getUsername().contains(" ")) {
+            return new ResponseEntity<>(null, false, "Username cannot contain spaces");
+        }
+
 
         if (loginRequest.getPassword() == null || loginRequest.getPassword().length() < 4) {
             return new ResponseEntity<>(null, false, "Password must be at least 4 characters");
         }
 
+        if(loginRequest.getPassword().contains(" ")) {
+            return new ResponseEntity<>(null, false, "Password cannot contain spaces");
+        }
 
         User newUser = new User(fullName, loginRequest.getUsername(), loginRequest.getPassword());
         userRepository.add(newUser);

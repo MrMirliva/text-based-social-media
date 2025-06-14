@@ -64,6 +64,10 @@ public class UserService {
             return new ResponseEntity<>(null, false, "Username already exists");
         }
 
+        if(newUsername.contains(" ")) {
+            return new ResponseEntity<>(null, false, "Username cannot contain spaces");
+        }
+
         user.setUsername(newUsername);
         userRepository.update(user);
         return new ResponseEntity<>(user, true, "Username updated successfully");
@@ -84,6 +88,9 @@ public class UserService {
 
         if(newPassword.contains(DELIMINATOR)) {
             return new ResponseEntity<>(null, false, "Password cannot contain the delimiter: " + DELIMINATOR);
+        }
+        if(newPassword.contains(" ")) {
+            return new ResponseEntity<>(null, false, "Password cannot contain spaces");
         }
 
         user.setPassword(newPassword);

@@ -101,32 +101,30 @@ public class FollowRepository extends MACRepository<Follow> {
     }
 
     /**
-     * This function counts the number of followers for a given followingId.
-     * 
-     * @param followingId The `followingId` parameter represents the ID of the user who is being
-     * followed by other users. In the context of the `numOfFollowers` method, it is used to count how
-     * many users are following the specified user.
+     * This function counts the number of followers a specific user has.
+     * @param followersId The `followersId` parameter represents the ID of the user whose followers are being counted.
+     * It is used in the `numOfFollowers` method to filter the list of follows and count how many users
+     * are following the user with the specified `followersId`.
      * @return The method `numOfFollowers` returns the count of follows where the `followingId` matches
-     * the provided `followingId`.
+     * the provided `followersId`.
      */
-    public int numOfFollowers(int followingId) {
+    public int numOfFollowers(int followersId) {
         return (int) getAll().stream()
-                .filter(follow -> follow.getFollowingId() == followingId)
+                .filter(follow -> follow.getFollowingId() == followersId)
                 .count();
     }
 
     /**
-     * This function counts the number of followers for a given followerId.
-     * 
-     * @param followerId The `followerId` parameter represents the ID of the user who is following
-     * other users. In the context of the `numOfFollowing` method, it is used to count how many users
-     * the specified follower is following.
+     * This function counts the number of users that a specific user is following.
+     * @param followingId The `followingId` parameter represents the ID of the user whose following count
+     * is being calculated. In the context of the `numOfFollowing` method, it is used to count how many
+     * users the specified user is following.   
      * @return The method `numOfFollowing` returns the count of follows where the `followerId` matches
-     * the provided `followerId`.
+     * the provided `followingId`.
      */
-    public int numOfFollowing(int followerId) {
+    public int numOfFollowing(int followingId) {
         return (int) getAll().stream()
-                .filter(follow -> follow.getFollowerId() == followerId)
+                .filter(follow -> follow.getFollowerId() == followingId)
                 .count();
     }
 }

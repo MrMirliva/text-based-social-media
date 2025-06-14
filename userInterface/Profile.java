@@ -112,7 +112,7 @@ public class Profile {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
                     System.out.println("Number of Followers: " + followingCount.getData());
                     if (followingCount.isOk()) {
-                        System.out.println("Number of Following: "+ profileResponse.getNumOfFollowers() );
+                        System.out.println("Number of Following: " + profileResponse.getNumOfFollowers());
                     }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());
@@ -184,13 +184,31 @@ public class Profile {
     public void unfollow() {
         System.out.println("Enter userId to unfollow: ");
         Scanner scanner = new Scanner(System.in);
-        int targetUserId = scanner.nextInt();
-        ResponseEntity<Boolean> response = followService
-                .unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
-        if (response.isOk()) {
-            System.out.println("Unfollowed user with ID: " + targetUserId);
-        } else {
-            System.out.println("Failed to unfollow user: " + response.getMessage());
+        int targetUserId;
+
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                targetUserId = Integer.parseInt(input);
+                HashMap<String, String> followUser = new HashMap<>();
+                followUser.put("userId", String.valueOf(targetUserId));
+                ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
+                if (user.isError()) {
+                    System.out.println("User not found. Please enter a valid user ID.");
+                    continue; // geçerli kullanıcı bulunamadı, döngüye devam et
+                } else {
+                    ResponseEntity<Boolean> response = followService
+                            .unfollow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
+                    if (response.isOk()) {
+                        System.out.println("Unfollowed user with ID: " + targetUserId);
+                    } else {
+                        System.out.println("Failed to follow user: " + response.getMessage());
+                    }
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-8).");
+            }
         }
 
     }
@@ -198,14 +216,33 @@ public class Profile {
     public void follow() {
         System.out.println("Enter userId to follow: ");
         Scanner scanner = new Scanner(System.in);
-        int targetUserId = scanner.nextInt();
-        ResponseEntity<Boolean> response = followService
-                .follow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
-        if (response.isOk()) {
-            System.out.println("Followod user with ID: " + targetUserId);
-        } else {
-            System.out.println("Failed to follow user: " + response.getMessage());
+        int targetUserId;
+
+        while (true) {
+            String input = scanner.nextLine();
+            try {
+                targetUserId = Integer.parseInt(input);
+                HashMap<String, String> followUser = new HashMap<>();
+                followUser.put("userId", String.valueOf(targetUserId));
+                ResponseEntity<User> user = authService.getAuthenticatedUser(followUser);
+                if (user.isError()) {
+                    System.out.println("User not found. Please enter a valid user ID.");
+                    continue; // geçerli kullanıcı bulunamadı, döngüye devam et
+                } else {
+                    ResponseEntity<Boolean> response = followService
+                            .follow(authService.getAuthenticatedUser(cookieHashMap).getData(), targetUserId);
+                    if (response.isOk()) {
+                        System.out.println("Followed user with ID: " + targetUserId);
+                    } else {
+                        System.out.println("Failed to follow user: " + response.getMessage());
+                    }
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-8).");
+            }
         }
+
     }
 
     public void followThings() {

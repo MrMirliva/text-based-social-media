@@ -4,6 +4,29 @@ import models.User;
 import models.Follow;
 import responses.ResponseEntity;
 import repositories.FollowRepository;
+
+/**
+ * FollowService is a service class responsible for managing the follow and unfollow operations between users
+ * in a social media application. It provides methods for following and unfollowing users, as well as retrieving
+ * follower and following counts for a given user. The service interacts with a FollowRepository to persist and
+ * query follow relationships.
+ * <p>
+ * Key features include:
+ * <ul>
+ *   <li>Allowing users to follow and unfollow other users with appropriate validation</li>
+ *   <li>Preventing users from following themselves or following the same user multiple times</li>
+ *   <li>Ensuring users can only unfollow users they are currently following</li>
+ *   <li>Providing methods to retrieve the number of followers and followings for a user</li>
+ *   <li>Returning informative response messages for each operation</li>
+ * </ul>
+ * <p>
+ * This class is intended to be used as a core component in applications that require social networking features,
+ * such as following and unfollowing users, and displaying follower/following statistics.
+ *
+ * @author Muhammed Yasin Eroğlu
+ * @version 1.0
+ * @since 2025-06-14
+ */
 public class FollowService {
     private final FollowRepository followRepository;
 

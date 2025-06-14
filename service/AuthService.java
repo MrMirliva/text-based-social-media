@@ -8,7 +8,28 @@ import java.util.Optional;
 import responses.ResponseEntity;
 import models.User;
 
-
+/**
+ * AuthService is a service class responsible for handling user authentication and authorization logic.
+ * It provides methods for user login, registration, logout, authentication status checking, and retrieving
+ * the currently authenticated user. The service interacts with a UserRepository to manage user data and
+ * uses a cookie-based mechanism to track authenticated sessions.
+ * <p>
+ * Key features include:
+ * <ul>
+ *   <li>Validating user credentials during login and registration</li>
+ *   <li>Enforcing unique usernames and input constraints (such as delimiter and space restrictions)</li>
+ *   <li>Managing session state via a cookie map containing user identifiers</li>
+ *   <li>Providing informative response messages for each authentication action</li>
+ *   <li>Ensuring secure handling of user authentication status and session termination</li>
+ * </ul>
+ * <p>
+ * This class is intended to be used as a core component in applications requiring user authentication
+ * and session management.
+ *
+ * @author Muhammed Yasin Eroğlu
+ * @version 1.0
+ * @since 2025-06-14
+ */
 public class AuthService {
     private final UserRepository userRepository;
     private final String DELIMINATOR = "<-!->";

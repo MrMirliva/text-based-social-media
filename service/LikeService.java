@@ -10,6 +10,28 @@ import repositories.LikeRepository;
 import repositories.PostRepository;
 import responses.ResponseEntity;
 
+/**
+ * LikeService is a service class responsible for managing the like and unlike operations on posts
+ * in a social media application. It provides methods for liking and unliking posts, as well as retrieving
+ * the like count for a specific post. The service interacts with LikeRepository and PostRepository to persist
+ * and query like relationships and post existence.
+ * <p>
+ * Key features include:
+ * <ul>
+ *   <li>Allowing users to like and unlike posts with appropriate validation</li>
+ *   <li>Preventing users from liking the same post multiple times</li>
+ *   <li>Ensuring users can only unlike posts they have previously liked</li>
+ *   <li>Providing methods to retrieve the number of likes for a post</li>
+ *   <li>Returning informative response messages for each operation</li>
+ * </ul>
+ * <p>
+ * This class is intended to be used as a core component in applications that require social networking features,
+ * such as liking and unliking posts, and displaying like statistics.
+ *
+ * @author Muhammed Yasin Eroğlu
+ * @version 1.0
+ * @since 2025-06-14
+ */
 public class LikeService {
     private final LikeRepository likeRepository;
     private final PostRepository postRepository;

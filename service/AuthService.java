@@ -69,6 +69,11 @@ public class AuthService {
             return new ResponseEntity<>(null, false, "Username cannot contain the delimiter: " + DELIMINATOR);
         }
 
+        if (loginRequest.getPassword() == null || loginRequest.getPassword().length() < 4) {
+            return new ResponseEntity<>(null, false, "Password must be at least 4 characters");
+        }
+
+
         User newUser = new User(fullName, loginRequest.getUsername(), loginRequest.getPassword());
         userRepository.add(newUser);
 

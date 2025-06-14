@@ -46,7 +46,21 @@ public class Menu {
         System.out.println("3. Post Things");
         System.out.println("4. exit System");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 4) {
+                    System.out.println("Invalid choice. Please enter 1, 2, 3.or 4.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-4).");
+            }
+        }
         ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
 
         switch (choice) {
@@ -81,9 +95,8 @@ public class Menu {
                 System.out.println("Invalid choice.");
                 showMenu();
         }
-        } else {
-            System.out.println("You are logged out. Please login again.");
-            
+        } else {            
+            profile.setLoggedOutBoolean(false);
             return;
         }
     }
@@ -137,7 +150,21 @@ public class Menu {
         System.out.println("3. see posts by User ID");       
         System.out.println("4. Back to Main Menu");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 4) {
+                    System.out.println("Invalid choice. Please enter 1, 2, 3.or 4.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-4).");
+            }
+        }
         ResponseEnity<User> user = authService.getAuthenticatedUser(cookieHashMap);
         switch (choice) {
             case 1:
@@ -222,7 +249,21 @@ public class Menu {
         System.out.println("2. Unlike a Post");
         System.out.println("3. Back to Main Menu");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 2) {
+                    System.out.println("Invalid choice. Please enter 1, or 2.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-2).");
+            }
+        }
         switch (choice) {
             case 1:
                 likePost(user);
@@ -241,6 +282,10 @@ public class Menu {
 
     public boolean isSystemExit() {
         return systemExit;
+    }
+
+    public void setWillExit(boolean willExit) {
+        this.willExit = willExit;
     }
 
     public boolean isWillExit() {

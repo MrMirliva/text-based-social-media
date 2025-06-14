@@ -2,6 +2,7 @@ package userInterface;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Scanner;
 
 import javax.lang.model.util.ElementScanner14;
@@ -66,7 +67,21 @@ public class Profile {
         System.out.println("7. Back to main menu");
         System.out.println("8. Log Out");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt(); 
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 8) {
+                    System.out.println("Invalid choice. Please enter 1, 2, 3, 4, 5, 6, 7 or 8.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-8).");
+            }
+        }
         switch (choice) {
             case 1:
                 System.out.println("Enter new UserName: ");
@@ -97,19 +112,18 @@ public class Profile {
                 break;
             case 5:
                 profileResponseEntity = userService.viewProfile(authUser);
-                ResponseEnity<Integer> followerCount = followService.getFollowerCount(authUser.getId());
+                ResponseEnity<Integer> followingCount = followService.getFollowingCount(authUser.getId());
 
 
                 if (profileResponseEntity.isOk()) {
                     ProfileResponse profileResponse = profileResponseEntity.getData();
                     System.out.println("Number of Followers: " + profileResponse.getNumOfFollowers());
-                if (followerCount.isOk()) {
-                    System.out.println("Number of Followers: " + followerCount.getData());
+                if (followingCount.isOk()) {
+                    System.out.println("Number of Following: " + followingCount.getData());
                 }
                 } else {
                     System.out.println("Failed to retrieve profile: " + profileResponseEntity.getMessage());
                 }
-                //seeFallowing 
                 profileMenu();
                 break;
             case 3:
@@ -202,7 +216,21 @@ public void followThings() {
     System.out.println("2: unfollow ");
     System.out.println("3: Back to profile menu");
     Scanner scanner = new Scanner(System.in);
-    int choice = scanner.nextInt();
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 3) {
+                    System.out.println("Invalid choice. Please enter 1, 2, or 3.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-3).");
+            }
+        }
     scanner.nextLine(); // Consume newline
 
 
@@ -219,17 +247,37 @@ public void followThings() {
     }
 }
     public void deleteEditPost() {
+        ResponseEnity<List<Post>> postsResponse = postService.getPostsByUserId(authService.getAuthenticatedUser(cookieHashMap).getData().getId());
         System.out.println("1. Edit Post");
         System.out.println("2. Delete Post");
         System.out.println("3. Back to Profile Menu");
         Scanner scanner = new Scanner(System.in);
-        int choice = scanner.nextInt();
-        scanner.nextLine(); // Consume newline
+        int choice;
+        while (true) {
+            System.out.print("Enter your choice: ");
+            String input = scanner.nextLine();
+            try {
+                choice = Integer.parseInt(input);
+                if (choice < 1 || choice > 3) {
+                    System.out.println("Invalid choice. Please enter 1, 2, or 3.");
+                } else {
+                    break; // geçerli seçim, çık döngüden
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid input. Please enter a number (1-3).");
+            }
+        }
+
         switch (choice) {
             case 1:
                 System.out.println("Enter Post ID to edit: ");
                 int postIdToEdit = scanner.nextInt();
                 scanner.nextLine(); // Consume newline
+                if (postsResponse.getData().stream().noneMatch(post -> post.getId() == postIdToEdit)) {
+                    System.out.println("Post not found.");
+                    break;
+                }
+                else{
                 System.out.println("Enter new content for the post: ");
                 String newContent = scanner.nextLine();
                 ResponseEnity<Post> editResponse = postService.editPost(authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToEdit, newContent);
@@ -238,10 +286,17 @@ public void followThings() {
                 } else {
                     System.out.println("Failed to edit post: " + editResponse.getMessage());
                 }
+            }
+ 
                 break;
             case 2:
                 System.out.println("Enter Post ID to delete: ");
                 int postIdToDelete = scanner.nextInt();
+                if (postsResponse.getData().stream().noneMatch(post -> post.getId() == postIdToDelete)) {
+                    System.out.println("Post not found.");
+                    break;
+                }
+                else{
                 ResponseEnity<Boolean> deleteResponse = postService.deletePost(authService.getAuthenticatedUser(cookieHashMap).getData(), postIdToDelete);
                 if (deleteResponse.isOk()) {
                     System.out.println("Post deleted successfully.");
@@ -249,6 +304,7 @@ public void followThings() {
                     System.out.println("Failed to delete post: " + deleteResponse.getMessage());
                 }
                 break;
+            }
             case 3:
                 profileMenu();
                 break;
@@ -256,6 +312,10 @@ public void followThings() {
                 System.out.println("Invalid choice. Please try again.");
                 deleteEditPost();
         }
+    }
+
+    public void setLoggedOutBoolean(Boolean loggedOutBoolean) {
+        this.loggedOutBoolean = loggedOutBoolean;
     }
 
     
